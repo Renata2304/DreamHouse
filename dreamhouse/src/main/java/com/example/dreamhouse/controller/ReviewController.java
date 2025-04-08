@@ -1,0 +1,42 @@
+package com.example.dreamhouse.controller;
+
+import com.example.dreamhouse.entity.Review;
+import com.example.dreamhouse.service.ReviewService;
+import com.example.dreamhouse.service.dto.ReviewDto;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/reviews")
+public class ReviewController {
+
+    private final ReviewService reviewService;
+
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
+    // Adaugă o recenzie
+    @PostMapping("/add")
+    public ResponseEntity<Review> addReview(@RequestBody ReviewDto reviewDto, @RequestParam UUID userId, @RequestParam UUID listingId) {
+        Review review = reviewService.addReview(reviewDto, userId, listingId);
+        return ResponseEntity.status(201).body(review);
+    }
+
+    // Obține recenziile pentru un anumit listing
+    @GetMapping("/byListing/{listingId}")
+    public ResponseEntity<List<Review>> getReviewsByListing(@PathVariable UUID listingId) {
+        List<Review> reviews = reviewService.getReviewsByListing(listingId);
+        return ResponseEntity.status(200).body(reviews);
+    }
+
+    // Obține recenziile pentru un anumit user
+    @GetMapping("/byUser/{userId}")
+    public ResponseEntity<List<Review>> getReviewsByUser(@PathVariable UUID userId) {
+        List<Review> reviews = reviewService.getReviewsByUser(userId);
+        return ResponseEntity.status(200).body(reviews);
+    }
+}
