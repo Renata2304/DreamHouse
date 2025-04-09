@@ -11,12 +11,12 @@ spring:
     password: postgres
 
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
+        default_schema: project
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        ddl-auto: none
     open-in-view: false
 
   flyway:

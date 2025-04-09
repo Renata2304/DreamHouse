@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "favorites")
+@Table(name = "favorites", schema = "project")
 public class Favorites {
 
     @Id

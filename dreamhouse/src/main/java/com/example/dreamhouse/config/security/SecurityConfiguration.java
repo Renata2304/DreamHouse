@@ -34,18 +34,19 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain authServerSecurityFilterChain (HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable);
-        if (securityEnabled) {
-           http.authorizeHttpRequests(auth -> auth
-                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
-                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                   .anyRequest().authenticated())
-                   .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
-                   .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-           http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        } else {
-            http.authorizeHttpRequests(auth -> auth
-                    .anyRequest().permitAll());
-        }
+//        if (securityEnabled) {
+//           http.authorizeHttpRequests(auth -> auth
+//                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
+//                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//                   .anyRequest().authenticated())
+//                   .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
+//                   .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//           http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+//        } else {
+//            http.authorizeHttpRequests(auth -> auth
+//                    .anyRequest().permitAll());
+//        }
+        http.authorizeHttpRequests(auth -> auth .anyRequest().permitAll());
         return http.build();
     }
 

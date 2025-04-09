@@ -12,7 +12,7 @@ public class LoginResponseDto {
     @JsonProperty("token_type")
     private String type = "Bearer";
     @JsonProperty("expires_in")
-//    @Value("${token.ttl}")
+    @Value("${token.ttl}")
     private long expire;
 
     public String getToken() {
