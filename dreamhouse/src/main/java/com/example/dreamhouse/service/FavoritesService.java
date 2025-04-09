@@ -1,7 +1,6 @@
 package com.example.dreamhouse.service;
 
-import com.example.dreamhouse.entity.Favorite;
-import com.example.dreamhouse.entity.FavoriteId;
+import com.example.dreamhouse.entity.Favorites;
 import com.example.dreamhouse.entity.Listing;
 import com.example.dreamhouse.entity.User;
 import com.example.dreamhouse.repository.FavoritesRepository;
@@ -25,24 +24,28 @@ public class FavoritesService {
         this.listingRepository = listingRepository;
     }
 
-    public Favorite addFavorite(FavoritesDto favoritesDto) {
-        if (favoritesRepository.existsByUserIdAndListingId(favoritesDto.getUserId(), favoritesDto.getListingId())) {
+    public Favorites addFavorite(FavoritesDto favoriteDto) {
+        UUID userId = favoriteDto.getUserId();
+        UUID listingId = favoriteDto.getListingId();
+
+        if (favoritesRepository.existsByUserIdAndListingId(userId, listingId)) {
             throw new RuntimeException("Favorite already exists.");
         }
 
-        Favorite favorite = new Favorite();
-        FavoriteId favoriteId = new FavoriteId(favoritesDto.getUserId(), favoritesDto.getListingId());
-        favorite.setId(favoriteId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Listing listing = listingRepository.findById(listingId).orElseThrow(() -> new RuntimeException("Listing not found"));
 
-        User user = userRepository.findById(favoritesDto.getUserId()).orElseThrow();
-        Listing listing = listingRepository.findById(favoritesDto.getListingId()).orElseThrow();
-        favorite.setUser(user);
-        favorite.setListing(listing);
-
+        Favorites favorite = new Favorites(user, listing);
         return favoritesRepository.save(favorite);
     }
 
     public boolean isFavorite(UUID userId, UUID listingId) {
         return favoritesRepository.existsByUserIdAndListingId(userId, listingId);
+    }
+
+    public void removeFavorite(UUID userId, UUID listingId) {
+        Favorites favorites = favoritesRepository.findByUserIdAndListingId(userId, listingId)
+                .orElseThrow(() -> new RuntimeException("Favorite not found"));
+        favoritesRepository.delete(favorites);
     }
 }

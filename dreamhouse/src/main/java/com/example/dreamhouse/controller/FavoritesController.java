@@ -1,6 +1,6 @@
 package com.example.dreamhouse.controller;
 
-import com.example.dreamhouse.entity.Favorite;
+import com.example.dreamhouse.entity.Favorites;
 import com.example.dreamhouse.service.FavoritesService;
 import com.example.dreamhouse.service.dto.FavoritesDto;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,20 @@ public class FavoritesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Favorite> addFavorite(@RequestBody FavoritesDto favoritesDto) {
-        Favorite favorite = favoritesService.addFavorite(favoritesDto);
+    public ResponseEntity<Favorites> addFavorite(@RequestBody FavoritesDto favoritesDto) {
+        Favorites favorite = favoritesService.addFavorite(favoritesDto);
         return ResponseEntity.status(201).body(favorite);
     }
 
     @GetMapping("/exists")
     public ResponseEntity<Boolean> isFavorite(@RequestParam UUID userId, @RequestParam UUID listingId) {
         boolean isFavorite = favoritesService.isFavorite(userId, listingId);
-        return ResponseEntity.status(200).body(isFavorite);
+        return ResponseEntity.ok(isFavorite);
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<Void> removeFavorite(@RequestParam UUID userId, @RequestParam UUID listingId) {
+        favoritesService.removeFavorite(userId, listingId);
+        return ResponseEntity.noContent().build();
     }
 }
