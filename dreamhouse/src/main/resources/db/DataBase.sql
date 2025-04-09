@@ -20,14 +20,14 @@ CREATE TABLE project.listings (
                           surface FLOAT NOT NULL,
                           rooms INT NOT NULL,
                           owner_id UUID NOT NULL,
-                          created_at TIMESTAMP DEFAULT NOW()
+                          created_at TIMESTAMP DEFAULT NOW(),
                           FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE project.images (
                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                         listing_id UUID NOT NULL,
-                        image_url TEXT NOT NULL
+                        image_url TEXT NOT NULL,
                         FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
 );
 
@@ -37,18 +37,14 @@ CREATE TABLE project.reviews (
                          listing_id UUID NOT NULL,
                          rating INT CHECK (rating BETWEEN 1 AND 5) NOT NULL,
                          comment TEXT,
-                         created_at TIMESTAMP DEFAULT NOW()
+                         created_at TIMESTAMP DEFAULT NOW(),
                          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                          FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
 );
 CREATE TABLE project.favorites (
                            user_id UUID NOT NULL,
                            listing_id UUID NOT NULL,
-                           PRIMARY KEY (user_id, listing_id)
+                           PRIMARY KEY (user_id, listing_id),
                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                            FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
 );
-
-
-
-
