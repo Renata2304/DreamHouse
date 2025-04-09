@@ -1,28 +1,36 @@
 package com.example.dreamhouse.entity;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "favorites")
-public class Favorite {
+public class Favorites {
 
-    @EmbeddedId
-    private FavoriteId id;
+    @Id
+    @GeneratedValue
+    private UUID id;
 
     @ManyToOne
-    @MapsId("userId")
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_favorite_user"))
     private User user;
 
     @ManyToOne
-    @MapsId("listingId")
+    @JoinColumn(name = "listing_id", nullable = false, foreignKey = @ForeignKey(name = "fk_favorite_listing"))
     private Listing listing;
 
-    // Getters and Setters
-    public FavoriteId getId() {
+    public Favorites() {}
+
+    public Favorites(User user, Listing listing) {
+        this.user = user;
+        this.listing = listing;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(FavoriteId id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
