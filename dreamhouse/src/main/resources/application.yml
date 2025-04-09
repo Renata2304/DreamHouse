@@ -20,4 +20,23 @@ spring:
     open-in-view: false
 
   flyway:
-    enabled: false
+#    enabled: false
+    enabled: true
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    table: project_schema_version
+    baseline-version: 0
+
+vars:
+    security:
+      enable: true
+
+admin:
+  username: admin
+  password: admin
+  email: admin@admin.com
+
+
+token:
+  ttl: 3600000
+  secret: "https://www.youtube.com/watch?v=VBUMYOYJISc"

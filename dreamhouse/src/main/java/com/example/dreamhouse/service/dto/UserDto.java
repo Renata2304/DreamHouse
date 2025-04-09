@@ -48,13 +48,4 @@ public class UserDto {
         this.role = role;
         return this;
     }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public UserDto setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-        return this;
-    }
 }

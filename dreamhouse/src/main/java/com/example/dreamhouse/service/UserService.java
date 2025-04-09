@@ -19,49 +19,42 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // Metoda pentru a salva un utilizator
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
-    // Metoda pentru a obține un utilizator după ID
     public Optional<User> getUserById(UUID id) {
         return userRepository.findById(id);
     }
 
-    // Metoda pentru a obține un utilizator după email
     public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findUserByEmail(email);
     }
 
-    // Metoda pentru a obține utilizatorii după rol
-    public List<User> getUsersByRole(String role) {
-        return userRepository.findByRole(role);
-    }
-
-    // Metoda pentru a obține toate utilizatorii
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // Conversia din User în UserDto
+    // Convert User entity to UserDto
     public UserDto convertToDto(User user) {
+        // Get the first role from the list of roles or "UNKNOWN" if the list is empty
+        String role = user.getRoles().isEmpty() ? "UNKNOWN" : String.valueOf(user.getRoles().get(0));
+
         return new UserDto()
                 .setId(user.getId())
-                .setName(user.getName())
+                .setName(user.getUsername())
                 .setEmail(user.getEmail())
-                .setRole(user.getRole())
-                .setCreatedAt(user.getCreatedAt());
+                .setRole(role);
     }
 
-    // Conversia listei de Users în DTOs
+    // Convert list of Users to list of UserDtos
     public List<UserDto> convertToDtoList(List<User> users) {
         return users.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
-    // Ștergerea unui utilizator
+    // Delete a user by ID
     public void deleteUser(UUID id) {
         userRepository.deleteById(id);
     }
