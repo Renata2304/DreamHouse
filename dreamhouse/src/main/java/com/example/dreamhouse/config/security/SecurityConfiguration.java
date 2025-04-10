@@ -33,10 +33,24 @@ public class SecurityConfiguration {
     public SecurityFilterChain authServerSecurityFilterChain (HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable);
         if (securityEnabled) {
-           http.authorizeHttpRequests(auth -> auth
-                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
-                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                   .anyRequest().authenticated())
+//           http.authorizeHttpRequests(auth -> auth
+//                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
+//                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+//                   .anyRequest().authenticated())
+            http.authorizeHttpRequests(auth -> auth
+                            // Public routes
+                            .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
+                                    "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                            // All other routes are accessible by anyone
+                            .requestMatchers("/users/add", "/users/{id}", "/users/email/{email}", "/users/all",
+                                    "/reviews/add", "/reviews/byuser/{userId}", "/reviews/bylisting/{listingId}",
+                                    "/listing/addListing", "/listing/getByLocation", "/images/add", "/images/bylisting/{listingId}",
+                                    "/favorites/add", "/favorites/exists")
+                            .permitAll()
+                            // Restrict DELETE /users/{id} to admin role
+                            .requestMatchers("/users/{id}")
+                            .hasRole("ADMIN")
+                            .anyRequest().authenticated())
                    .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
                    .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
            http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

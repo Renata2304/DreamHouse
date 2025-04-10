@@ -49,13 +49,13 @@ public class AuthController {
         return new ResponseEntity<>(loginResponseDto.setToken(token), HttpStatus.OK);
     }
 
-    @SecurityRequirement(name = "Bearer Authentication")
-    @RequestMapping(path ="/token", method = RequestMethod.GET)
-    public ResponseEntity<?> validateToken() {
-        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        logger.info("Request to validate token for user {}", user.getUsername());
-        String email = user.getUsername();
-        logger.info("Successfully validated token for user {}", user.getUsername());
-        return new ResponseEntity<>(email, HttpStatus.OK);
-    }
+//    @SecurityRequirement(name = "Bearer Authentication")
+//    @RequestMapping(path ="/token", method = RequestMethod.GET)
+//    public ResponseEntity<?> validateToken() {
+//        UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        logger.info("Request to validate token for user {}", user.getUsername());
+//        String email = user.getUsername();
+//        logger.info("Successfully validated token for user {}", user.getUsername());
+//        return new ResponseEntity<>(email, HttpStatus.OK);
+//    }
 }
