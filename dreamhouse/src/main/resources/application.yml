@@ -1,3 +1,4 @@
+#  cd ../../mnt/f/Facultate/Anul\ 4/Semestrul\ II/TWEB/DreamHouse/dreamhouse/
 server:
   port: 8080
 
@@ -9,7 +10,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-
   jpa:
     properties:
       hibernate:
@@ -18,25 +18,25 @@ spring:
         show-sql: true
         ddl-auto: none
     open-in-view: false
-
   flyway:
-#    enabled: false
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: false
     table: project_schema_version
     baseline-version: 0
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 vars:
     security:
       enable: true
 
-admin:
-  username: admin
-  password: admin
-  email: admin@admin.com
-
-
 token:
   ttl: 3600000
   secret: "https://www.youtube.com/watch?v=VBUMYOYJISc"
+
+admin:
+  username: admin
+  email: admin@admin.com
+  password: admin

@@ -1,5 +1,6 @@
 package com.example.dreamhouse.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,28 +26,24 @@ public class SecurityConfiguration {
 
     private JwtAuthEntryPoint authEntryPoint;
 
+    @Autowired
     private CustomUserDetailsService userDetailsService;
-
-    public SecurityConfiguration(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain authServerSecurityFilterChain (HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable);
-//        if (securityEnabled) {
-//           http.authorizeHttpRequests(auth -> auth
-//                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
-//                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-//                   .anyRequest().authenticated())
-//                   .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
-//                   .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//           http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-//        } else {
-//            http.authorizeHttpRequests(auth -> auth
-//                    .anyRequest().permitAll());
-//        }
-        http.authorizeHttpRequests(auth -> auth .anyRequest().permitAll());
+        if (securityEnabled) {
+           http.authorizeHttpRequests(auth -> auth
+                   .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
+                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                   .anyRequest().authenticated())
+                   .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
+                   .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+           http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        } else {
+            http.authorizeHttpRequests(auth -> auth
+                    .anyRequest().permitAll());
+        }
         return http.build();
     }
 
