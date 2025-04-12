@@ -18,7 +18,7 @@ public class User {
 
     private String name;
     private String email;
-    private String passwordHash;
+//    private String passwordHash;
     private String role;
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -48,13 +48,13 @@ public class User {
         this.email = email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+//    public String getPasswordHash() {
+//        return passwordHash;
+//    }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-    }
+//    public void setPasswordHash(String passwordHash) {
+//        this.passwordHash = passwordHash;
+//    }
 
     public String getRole() {
         return role;
