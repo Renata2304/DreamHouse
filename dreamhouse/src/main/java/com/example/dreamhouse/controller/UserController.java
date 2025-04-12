@@ -31,11 +31,11 @@ public class UserController {
         return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.status(201).body(savedUser);
-    }
+//    @PostMapping("/add")
+//    public ResponseEntity<User> addUser(@RequestBody User user) {
+//        User savedUser = userService.saveUser(user);
+//        return ResponseEntity.status(201).body(savedUser);
+//    }
 
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -38,19 +39,36 @@ public class SecurityConfiguration {
 //                           "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 //                   .anyRequest().authenticated())
             http.authorizeHttpRequests(auth -> auth
-                            // Public routes
-                            .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register",
-                                    "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                            // All other routes are accessible by anyone
-                            .requestMatchers("/users/add", "/users/{id}", "/users/email/{email}", "/users/all",
-                                    "/reviews/add", "/reviews/byuser/{userId}", "/reviews/bylisting/{listingId}",
-                                    "/listing/addListing", "/listing/getByLocation", "/images/add", "/images/bylisting/{listingId}",
-                                    "/favorites/add", "/favorites/exists")
-                            .permitAll()
-                            // Restrict DELETE /users/{id} to admin role
-                            .requestMatchers("/users/{id}")
-                            .hasRole("ADMIN")
-                            .anyRequest().authenticated())
+                    // Public endpoints
+                    .requestMatchers(
+                            "/api/v1/auth/login",
+                            "/api/v1/auth/register",
+                            "/v3/api-docs/**",            // Swagger Docs
+                            "/swagger-ui/**",             // Swagger UI
+                            "/swagger-ui.html"
+                    ).permitAll()
+
+                    // Authenticated endpoints
+                    .requestMatchers(
+                            "/users/*",                   // matches /users/{id}
+                            "/users/email/*",             // matches /users/email/{email}
+                            "/users/all",
+                            "/reviews/add",
+                            "/reviews/byuser/*",          // matches /reviews/byuser/{userId}
+                            "/reviews/bylisting/*",       // matches /reviews/bylisting/{listingId}
+                            "/listing/addListing",
+                            "/listing/getByLocation",
+                            "/images/add",
+                            "/images/bylisting/*",        // matches /images/bylisting/{listingId}
+                            "/favorites/add",
+                            "/favorites/exists"
+                    ).authenticated()
+
+                    // Admin-only access for DELETE on /users
+                    .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
+
+                    // Any other request must be authenticated
+                    .anyRequest().authenticated())
                    .exceptionHandling((exception)-> exception.authenticationEntryPoint(authEntryPoint))
                    .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
            http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

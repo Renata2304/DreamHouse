@@ -7,7 +7,9 @@ public class ListingDto {
     private String title;
     private String description;
     private String location;
-    private BigDecimal price;  // Changed to BigDecimal
+    private BigDecimal price;
+    private float surface;
+    private int rooms;
 
     public String getTitle() {
         return title;
@@ -40,9 +42,28 @@ public class ListingDto {
         return price;
     }
 
-    public ListingDto setPrice(BigDecimal price) {  // Changed to BigDecimal
+    public ListingDto setPrice(BigDecimal price) {
         this.price = price;
         return this;
     }
+
+    public int getRooms() {
+        return rooms;
+    }
+
+    public ListingDto setRooms(int rooms) {
+        this.rooms = rooms;
+        return this;
+    }
+
+    public float getSurface() {
+        return surface;
+    }
+
+    public ListingDto setSurface(float surface) {
+        this.surface = surface;
+        return this;
+    }
+
 
 }
