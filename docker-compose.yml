@@ -1,62 +1,70 @@
 services:
-  dreamhouse-db:
-    build:
-      context: ./dreamhouse/src/main/resources/db
-      dockerfile: Dockerfile
-    container_name: dreamhouse-db
+  dreamhouse-app-db:
+    image: postgres:17-alpine
+    container_name: dreamhouse-app-db
     ports:
-      - "5432:5432"
+      - "1200:5432"
     environment:
-      POSTGRES_USER: postgres
       POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - dreamhouse-db-vol:/var/lib/postgresql/data
+      - dreamhouse-app-db-vol:/var/lib/postgresql/data
+      - ./dreamhouse/src/main/resources/db/DataBase.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       dreamhouse-auth-network:
       dreamhouse-app-network:
 
+  dreamhouse-auth-db:
+    image: postgres:17-alpine
+    container_name: dreamhouse-auth-db
+    ports:
+      - "1201:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - dreamhouse-auth-db-vol:/var/lib/postgresql/data
+    networks:
+      dreamhouse-auth-network:
+
   dreamhouse-auth-service:
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.2
+    container_name: dreamhouse-auth-service
     restart: always
     command: start
     depends_on:
-      - dreamhouse-db
+      - dreamhouse-auth-db
     ports:
-      - "9990:8080"
-      - "9991:8443"
+      - "1100:8080"
+      - "1101:8443"
     environment:
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME: localhost
-      KC_PROXY: edge
       KC_HTTP_ENABLED: true
-      DB: postgres
-      DB_URL: jdbc:postgresql://postgres:5432/postgresql?ssl=allow
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://dreamhouse-auth-db:5432/postgres?ssl=allow
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/dreamhouse.crt
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/dreamhouse.key
     volumes:
+      - dreamhouse-auth-data:/opt/keycloak/data
       - ./certificates/dreamhouse.crt:/opt/keycloak/conf/dreamhouse.crt
       - ./certificates/dreamhouse.key:/opt/keycloak/conf/dreamhouse.key
     networks:
       dreamhouse-auth-network:
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.keycloak.entrypoints=http"
-      - "traefik.http.routers.keycloak.rule=Host(`localhost`)"
-      - "traefik.http.middlewares.keycloak-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.keycloak.middlewares=keycloak-https-redirect"
-      - "traefik.http.routers.keycloak-secure.entrypoints=https"
-      - "traefik.http.routers.keycloak-secure.rule=Host(`localhost`)"
-      - "traefik.http.routers.keycloak-secure.tls=true"
-      - "traefik.http.routes.keycloak-secure.service=keycloak"
-      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
 
 volumes:
-  dreamhouse-db-vol:
+  dreamhouse-app-db-vol:
+  dreamhouse-auth-db-vol:
+  dreamhouse-auth-data:
+
 networks:
-  dreamhouse-auth-network:
   dreamhouse-app-network:
+  dreamhouse-auth-network:
