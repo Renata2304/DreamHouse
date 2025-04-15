@@ -2,7 +2,9 @@ package com.example.dreamhouse.controller;
 
 import com.example.dreamhouse.entity.User;
 import com.example.dreamhouse.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +39,8 @@ public class UserController {
         return ResponseEntity.status(201).body(savedUser);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasAnyRole('client_user', 'client_admin')")
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
