@@ -17,6 +17,12 @@ spring:
           issuer-uri: https://localhost:1101/realms/dreamhouse
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
+jwt:
+  auth:
+    converter:
+      resource-id: backend-rest-api
+      principle-attribute: preferred_username
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,3 +34,4 @@ spring:
 
   flyway:
     enabled: false
+    
