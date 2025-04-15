@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - dreamhouse-app-db-vol:/var/lib/postgresql/data
-      - ./dreamhouse/src/main/resources/db/DataBase.sql:/docker-entrypoint-initdb.d/db_init.sql
+      - ./dreamhouse/src/main/resources/db/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       dreamhouse-auth-network:
       dreamhouse-app-network:
@@ -26,6 +26,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - dreamhouse-auth-db-vol:/var/lib/postgresql/data
+      - ./auth-service/auth_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       dreamhouse-auth-network:
 
@@ -46,6 +47,7 @@ services:
       KC_HOSTNAME: localhost
       KC_HTTP_ENABLED: true
       KC_DB: postgres
+      KC_DB_SCHEMA: auth
       KC_DB_URL: jdbc:postgresql://dreamhouse-auth-db:5432/postgres?ssl=allow
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
