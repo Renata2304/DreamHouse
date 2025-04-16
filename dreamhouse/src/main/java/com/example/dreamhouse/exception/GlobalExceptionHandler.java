@@ -58,5 +58,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorObject, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler({EntityNotFoundException.class})
+    public ResponseEntity<ErrorObject> handleNotFound(RuntimeException ex, WebRequest request) {
+        ErrorObject errorObject = new ErrorObject();
+
+        errorObject
+                .setStatusCode(HttpStatus.NOT_FOUND.value()) // 404
+                .setMessage(ex.getMessage())
+                .setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(errorObject, HttpStatus.NOT_FOUND);
+    }
+
 
 }
