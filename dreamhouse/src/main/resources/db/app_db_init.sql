@@ -62,6 +62,13 @@ CREATE TABLE IF NOT EXISTS favorites (
                                     FOREIGN KEY (listing_id) REFERENCES listings(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS user_profile (
+                              user_id UUID PRIMARY KEY,
+                              bio TEXT,
+                              avatar_url TEXT,
+                              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS user_role (
                                     user_id UUID NOT NULL,
                                     role_id INTEGER NOT NULL,

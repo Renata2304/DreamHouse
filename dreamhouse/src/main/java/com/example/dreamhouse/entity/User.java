@@ -27,6 +27,9 @@ public class User {
     @JsonManagedReference
     private List<Listing> listings;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfile userProfile;
+
     public UUID getId() {
         return id;
     }
@@ -65,6 +68,14 @@ public class User {
 
     public List<Listing> getListings() {
         return listings;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public void setListings(List<Listing> listings) {
