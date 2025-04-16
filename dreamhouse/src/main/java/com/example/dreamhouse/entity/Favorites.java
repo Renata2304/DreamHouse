@@ -7,9 +7,8 @@ import java.util.UUID;
 @Table(name = "favorites", schema = "project")
 public class Favorites {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
+    @EmbeddedId
+    private FavoritesId id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_favorite_user"))
@@ -24,14 +23,6 @@ public class Favorites {
     public Favorites(User user, Listing listing) {
         this.user = user;
         this.listing = listing;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public User getUser() {

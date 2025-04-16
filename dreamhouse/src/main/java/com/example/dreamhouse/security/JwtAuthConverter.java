@@ -1,5 +1,7 @@
 package com.example.dreamhouse.security;
 
+import com.example.dreamhouse.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.NonNull;
@@ -24,11 +26,18 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     private final JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter =
             new JwtGrantedAuthoritiesConverter();
 
+    private final UserService userService;
+
     @Value("${jwt.auth.converter.resource-id}")
     private String resourceId;
 
     @Value("${jwt.auth.converter.principle-attribute}")
     private String principleAttribute;
+
+    @Autowired
+    public JwtAuthConverter(UserService userService) {
+        this.userService = userService;
+    }
 
     @Override
     public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
@@ -36,6 +45,12 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractResourceRoles(jwt).stream()
         ).collect(Collectors.toSet());
+
+        String id = jwt.getClaimAsString("sub");
+        String email = jwt.getClaimAsString("email");
+        String username = jwt.getClaimAsString(principleAttribute);
+        userService.syncUser(id, username, email);
+
         return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
     }
 

@@ -1,9 +1,12 @@
 package com.example.dreamhouse.controller;
 
 import com.example.dreamhouse.entity.Listing;
+import com.example.dreamhouse.entity.User;
 import com.example.dreamhouse.service.ListingService;
 import com.example.dreamhouse.service.dto.ListingDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -31,10 +36,15 @@ public class ListingController {
         return ResponseEntity.status(200).body(listingDtoList);
     }
 
-    // Method to add a listing
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
     @PostMapping("/addListing")
-    public ResponseEntity<Listing> addListing(@RequestBody ListingDto listingDto, @RequestParam UUID ownerId) {
-        Listing listing = listingService.addListing(listingDto, ownerId);
-        return ResponseEntity.status(201).body(listing);
+    public ResponseEntity<Listing> addListing(@RequestBody ListingDto listingDto, Principal principal) {
+        if (principal == null) {
+            throw new IllegalStateException("No user is logged in");
+        }
+        Listing listing = listingService.addListing(listingDto);
+        return ResponseEntity.status(200).body(listing);
     }
+
 }

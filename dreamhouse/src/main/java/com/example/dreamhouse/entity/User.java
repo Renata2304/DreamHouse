@@ -1,11 +1,9 @@
 package com.example.dreamhouse.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,62 +11,63 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue
+    @Column(name = "id")
     private UUID id;
-
-    private String name;
+    @Column(name = "username", nullable = false)
+    private String username;
+    @Column(name = "email")
     private String email;
-//    private String passwordHash;
-    private String role;
-    private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Getters and Setters
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_role", schema = "project", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Role> roles;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Listing> listings;
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public User setId(UUID id) {
         this.id = id;
+        return this;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public User setUsername(String username) {
+        this.username = username;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
+        return this;
     }
 
-//    public String getPasswordHash() {
-//        return passwordHash;
-//    }
-
-//    public void setPasswordHash(String passwordHash) {
-//        this.passwordHash = passwordHash;
-//    }
-
-    public String getRole() {
-        return role;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public User setRoles(List<Role> roles) {
+        this.roles = roles;
+        return this;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public List<Listing> getListings() {
+        return listings;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setListings(List<Listing> listings) {
+        this.listings = listings;
     }
 }

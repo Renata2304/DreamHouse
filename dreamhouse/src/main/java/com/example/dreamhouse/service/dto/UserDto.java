@@ -9,7 +9,6 @@ public class UserDto {
     private String name;
     private String email;
     private String role;
-    private LocalDateTime createdAt;
 
     // Getters and setters
 
@@ -46,15 +45,6 @@ public class UserDto {
 
     public UserDto setRole(String role) {
         this.role = role;
-        return this;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public UserDto setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
         return this;
     }
 }
