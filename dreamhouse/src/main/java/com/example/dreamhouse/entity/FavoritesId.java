@@ -1,5 +1,6 @@
 package com.example.dreamhouse.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
@@ -8,42 +9,44 @@ import java.util.UUID;
 
 @Embeddable
 public class FavoritesId implements Serializable {
+    @Column(name = "user_id")
+    private UUID userId;
 
-    private UUID user;
-    private UUID listing;
+    @Column(name = "listing_id")
+    private UUID listingId;
 
     public FavoritesId() {}
 
-    public FavoritesId(UUID user, UUID listing) {
-        this.user = user;
-        this.listing = listing;
+    public FavoritesId(UUID userId, UUID listingId) {
+        this.userId = userId;
+        this.listingId = listingId;
     }
 
-    public UUID getUser() {
-        return user;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUser(UUID user) {
-        this.user = user;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
-    public UUID getListing() {
-        return listing;
+    public UUID getListingId() {
+        return listingId;
     }
 
-    public void setListing(UUID listing) {
-        this.listing = listing;
+    public void setListingId(UUID listingId) {
+        this.listingId = listingId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof FavoritesId that)) return false;
-        return Objects.equals(user, that.user) && Objects.equals(listing, that.listing);
+        return Objects.equals(userId, that.userId) && Objects.equals(listingId, that.listingId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user, listing);
+        return Objects.hash(userId, listingId);
     }
 }

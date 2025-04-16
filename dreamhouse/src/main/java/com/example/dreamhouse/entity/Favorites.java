@@ -11,11 +11,25 @@ public class Favorites {
     private FavoritesId id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_favorite_user"))
+    @MapsId("userId")
+    @JoinColumn(
+            name = "user_id",
+            nullable = false,
+            insertable = false,
+            updatable = false,
+            foreignKey = @ForeignKey(name = "fk_favorite_user")
+    )
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "listing_id", nullable = false, foreignKey = @ForeignKey(name = "fk_favorite_listing"))
+    @MapsId("listingId")
+    @JoinColumn(
+            name = "listing_id",
+            nullable = false,
+            insertable = false,
+            updatable = false,
+            foreignKey = @ForeignKey(name = "fk_favorite_listing")
+    )
     private Listing listing;
 
     public Favorites() {}
@@ -23,6 +37,15 @@ public class Favorites {
     public Favorites(User user, Listing listing) {
         this.user = user;
         this.listing = listing;
+        this.id = new FavoritesId(user.getId(), listing.getId());
+    }
+
+    public FavoritesId getId() {
+        return id;
+    }
+
+    public void setId(FavoritesId id) {
+        this.id = id;
     }
 
     public User getUser() {
