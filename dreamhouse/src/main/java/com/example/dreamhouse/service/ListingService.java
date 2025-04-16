@@ -2,6 +2,8 @@ package com.example.dreamhouse.service;
 
 import com.example.dreamhouse.entity.Listing;
 import com.example.dreamhouse.entity.User;
+import com.example.dreamhouse.exception.EntityNotFoundException;
+import com.example.dreamhouse.exception.UnauthorizedException;
 import com.example.dreamhouse.repository.ListingRepository;
 import com.example.dreamhouse.repository.UserRepository;
 import com.example.dreamhouse.service.dto.ListingDto;
@@ -62,6 +64,24 @@ public class ListingService {
         listing.setOwner(owner);
 
         return listingRepository.save(listing);
+    }
+
+    public void deleteListing(UUID listingId) {
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getToken().getClaimAsString("sub");
+
+        Optional<Listing> listingOpt = listingRepository.findById(listingId);
+        if (listingOpt.isEmpty()) {
+            throw new EntityNotFoundException("Listing with ID " + listingId + " not found.");
+        }
+
+        Listing listing = listingOpt.get();
+
+        if (!listing.getOwner().getId().toString().equals(currentUserId)) {
+            throw new UnauthorizedException("You are not allowed to delete this listing.");
+        }
+
+        listingRepository.deleteById(listingId);
     }
 
 }
