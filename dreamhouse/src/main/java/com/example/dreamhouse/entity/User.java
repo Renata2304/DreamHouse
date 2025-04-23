@@ -1,5 +1,6 @@
 package com.example.dreamhouse.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -10,15 +11,12 @@ import java.util.UUID;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
     @Column(name = "email")
     private String email;
-    @Column(name = "password")
-    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinTable(name = "user_role", schema = "project", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -26,7 +24,11 @@ public class User {
     private List<Role> roles;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Listing> listings;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private UserProfile userProfile;
 
     public UUID getId() {
         return id;
@@ -55,15 +57,6 @@ public class User {
         return this;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public User setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
     public List<Role> getRoles() {
         return roles;
     }
@@ -75,6 +68,14 @@ public class User {
 
     public List<Listing> getListings() {
         return listings;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public void setListings(List<Listing> listings) {

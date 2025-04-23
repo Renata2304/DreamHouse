@@ -3,7 +3,9 @@ package com.example.dreamhouse.controller;
 import com.example.dreamhouse.entity.Favorites;
 import com.example.dreamhouse.service.FavoritesService;
 import com.example.dreamhouse.service.dto.FavoritesDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -18,18 +20,16 @@ public class FavoritesController {
         this.favoritesService = favoritesService;
     }
 
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
     @PostMapping("/add")
     public ResponseEntity<Favorites> addFavorite(@RequestBody FavoritesDto favoritesDto) {
         Favorites favorite = favoritesService.addFavorite(favoritesDto);
         return ResponseEntity.status(201).body(favorite);
     }
 
-    @GetMapping("/exists")
-    public ResponseEntity<Boolean> isFavorite(@RequestParam UUID userId, @RequestParam UUID listingId) {
-        boolean isFavorite = favoritesService.isFavorite(userId, listingId);
-        return ResponseEntity.ok(isFavorite);
-    }
-
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
     @DeleteMapping("/remove")
     public ResponseEntity<Void> removeFavorite(@RequestParam UUID userId, @RequestParam UUID listingId) {
         favoritesService.removeFavorite(userId, listingId);

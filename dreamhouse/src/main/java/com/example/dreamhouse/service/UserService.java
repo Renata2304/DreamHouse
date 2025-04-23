@@ -35,6 +35,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public void syncUser(String id, String username, String email) {
+        UUID uuid = UUID.fromString(id);
+        userRepository.findById(uuid).orElseGet(() -> {
+            User user = new User();
+            user.setId(uuid);
+            user.setUsername(username);
+            user.setEmail(email);
+            return userRepository.save(user);
+        });
+    }
+
     // Convert User entity to UserDto
     public UserDto convertToDto(User user) {
         // Get the first role from the list of roles or "UNKNOWN" if the list is empty

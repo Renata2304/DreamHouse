@@ -12,11 +12,5 @@ import java.util.UUID;
 @Repository
 public interface ListingRepository extends JpaRepository<Listing, UUID> {
 
-//    List<Listing> findByOwnerId(UUID ownerId);
-
-//    List<Listing> findByLocationContainingIgnoreCase(String location);
-
-//    List<Listing> findByPriceBetween(BigDecimal price, BigDecimal price2);
-
     Optional<List<Listing>> findByLocation(String location);
 }

@@ -1,6 +1,7 @@
 package com.example.dreamhouse.controller;
 
 import com.example.dreamhouse.service.RoleService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/role")
-public class RoleController implements SecuredRestController{
+@SecurityRequirement(name = "bearerAuth")
+public class RoleController {
 
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
@@ -27,7 +29,7 @@ public class RoleController implements SecuredRestController{
     }
 
     @RequestMapping(path = "/add", method = RequestMethod.POST)
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('client_admin')")
     public ResponseEntity<?> addRoles(@RequestBody List<String> roleList) {
         logger.info("Request to add roles {}", roleList);
         List<String> addedRoles = roleService.addRoles(roleList);

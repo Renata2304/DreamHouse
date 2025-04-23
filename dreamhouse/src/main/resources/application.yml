@@ -1,4 +1,3 @@
-#  cd ../../mnt/f/Facultate/Anul\ 4/Semestrul\ II/TWEB/DreamHouse/dreamhouse/
 server:
   port: 8080
 
@@ -7,36 +6,58 @@ spring:
     name: dreamhouse
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:1200/postgres
     username: postgres
     password: postgres
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:1100/realms/dreamhouse
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak:
+            client-id: backend-rest-api
+            client-secret: YOUR_CLIENT_SECRET
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: https://localhost:1101/realms/dreamhouse
+
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: 9b12429aec3986
+    password: d86c56ad6fe97b
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+jwt:
+  auth:
+    converter:
+      resource-id: backend-rest-api
+      principle-attribute: preferred_username
+
   jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        default_schema: project
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show-sql: true
-        ddl-auto: none
     open-in-view: false
+
   flyway:
-    enabled: true
-    baseline-on-migrate: true
-    validate-on-migrate: false
-    table: project_schema_version
-    baseline-version: 0
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-
-vars:
-    security:
-      enable: true
-
-token:
-  ttl: 3600000
-  secret: "https://www.youtube.com/watch?v=VBUMYOYJISc"
-
-admin:
-  username: admin
-  email: admin@admin.com
-  password: admin
+    enabled: false
+    

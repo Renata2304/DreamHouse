@@ -1,4 +1,4 @@
-package com.example.dreamhouse.config;
+package com.example.dreamhouse.security;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;

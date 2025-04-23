@@ -9,7 +9,6 @@ public class UserDto {
     private String name;
     private String email;
     private String role;
-    private LocalDateTime createdAt;
 
     // Getters and setters
 
