@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - dreamhouse-app-db-vol:/var/lib/postgresql/data
-      - ./dreamhouse/src/main/resources/db/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+      - ./io-service/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       dreamhouse-auth-network:
       dreamhouse-app-network:
