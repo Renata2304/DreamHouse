@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DiscordProjectSettings">
+    <option name="show" value="ASK" />
+    <option name="description" value="" />
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/Backend/pom.xml" />
-        <option value="$PROJECT_DIR$/dreamhouse/pom.xml" />
+        <option value="$PROJECT_DIR$/dreamhouse-user-service/pom.xml" />
+        <option value="$PROJECT_DIR$/dreamhouse-listing-service/pom.xml" />
       </list>
     </option>
   </component>
