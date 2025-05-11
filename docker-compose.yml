@@ -30,6 +30,26 @@ services:
     networks:
       dreamhouse-auth-network:
 
+  dreamhouse-db-manager:
+    image: dpage/pgadmin4:9.3
+    container_name: dreamhouse-db-manager
+    restart: always
+    depends_on:
+      - dreamhouse-auth-db
+      - dreamhouse-app-db
+    ports:
+      - "1202:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dreamhouse.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      dreamhouse-auth-network:
+      dreamhouse-app-network:
+
   dreamhouse-auth-service:
     image: quay.io/keycloak/keycloak:26.2
     container_name: dreamhouse-auth-service
@@ -62,29 +82,42 @@ services:
     networks:
       dreamhouse-auth-network:
 
-  kong:
-    image: kong:3.4
-    container_name: kong
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
     restart: always
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer-data:/data
+
+  dreamhouse-api-gateway:
+    image: kong:3.9
+    container_name: dreamhouse-api-gateway
+    restart: always
+    ports:
+      - "8000:8000"  # Public API Gateway
+      - "8001:8001"  # Admin API
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
-    ports:
-      - "8000:8000"  # Public API Gateway
-      - "8001:8001"  # Admin API
     volumes:
-      - ./kong.yml:/usr/local/kong/kong.yml
+      - ./api-gateway/kong.yml:/usr/local/kong/kong.yml
     networks:
       - dreamhouse-app-network
-
 
 volumes:
   dreamhouse-app-db-vol:
   dreamhouse-auth-db-vol:
   dreamhouse-auth-data:
+  pgadmin-data:
+  portainer-data:
 
 networks:
   dreamhouse-app-network:

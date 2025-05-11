@@ -1,7 +1,7 @@
 _format_version: "3.0"
 
 services:
-  - name: listing-service
+  - name: dreamhouse-app-listing-service
     url: http://host.docker.internal:8080
     routes:
       - name: listing-route
@@ -9,7 +9,7 @@ services:
           - /listings
         strip_path: true
 
-  - name: user-service
+  - name: dreamhouse-app-user-service
     url: http://host.docker.internal:8081
     routes:
       - name: user-route
