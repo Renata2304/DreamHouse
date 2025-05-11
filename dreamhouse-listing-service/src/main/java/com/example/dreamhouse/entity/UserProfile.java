@@ -1,5 +1,6 @@
 package com.example.dreamhouse.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -14,6 +15,7 @@ public class UserProfile {
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
     private String bio;

@@ -28,6 +28,7 @@ public class User {
     private List<Listing> listings;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private UserProfile userProfile;
 
     public UUID getId() {
