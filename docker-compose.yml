@@ -33,6 +33,7 @@ services:
   dreamhouse-db-manager:
     image: dpage/pgadmin4:9.3
     container_name: dreamhouse-db-manager
+    user: "5050:5050"
     restart: always
     depends_on:
       - dreamhouse-auth-db
