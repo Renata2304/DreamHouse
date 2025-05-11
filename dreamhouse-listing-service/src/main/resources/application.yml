@@ -20,7 +20,7 @@ spring:
         registration:
           keycloak:
             client-id: backend-rest-api
-            client-secret: YOUR_CLIENT_SECRET
+            client-secret:
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: openid, profile, email
@@ -60,4 +60,3 @@ jwt:
 
   flyway:
     enabled: false
-    

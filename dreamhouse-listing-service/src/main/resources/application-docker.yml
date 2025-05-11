@@ -1,12 +1,12 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
   application:
     name: dreamhouse-listing-service
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:1200/postgres
+    url: jdbc:postgresql://dreamhouse-app-db:5432/postgres
     username: postgres
     password: postgres
 
@@ -14,8 +14,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://localhost:1101/realms/dreamhouse
-          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+          issuer-uri: http://localhost:1100/realms/dreamhouse
+          jwk-set-uri: http://dreamhouse-auth-service:8080/realms/dreamhouse/protocol/openid-connect/certs
       client:
         registration:
           keycloak:
@@ -26,7 +26,7 @@ spring:
             scope: openid, profile, email
         provider:
           keycloak:
-            issuer-uri: https://localhost:1101/realms/dreamhouse
+            issuer-uri: http://dreamhouse-auth-service:8080/realms/dreamhouse
 
   mail:
     host: smtp.mailtrap.io
