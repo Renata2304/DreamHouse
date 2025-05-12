@@ -2,7 +2,7 @@ _format_version: "3.0"
 
 services:
   - name: dreamhouse-app-listing-service
-    url: http://host.docker.internal:8080
+    url: http://dreamhouse-app-listing-service:8080
     routes:
       - name: listing-route
         paths:
@@ -10,9 +10,17 @@ services:
         strip_path: true
 
   - name: dreamhouse-app-user-service
-    url: http://host.docker.internal:8081
+    url: http://dreamhouse-app-user-service:8081
     routes:
       - name: user-route
         paths:
           - /users
+        strip_path: true
+
+  - name: dreamhouse-auth-service
+    url: http://dreamhouse-auth-service:8080
+    routes:
+      - name: keycloak-route
+        paths:
+          - /keycloak
         strip_path: true
