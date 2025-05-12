@@ -7,10 +7,14 @@ import com.example.dreamhouse.repository.ReviewRepository;
 import com.example.dreamhouse.repository.ListingRepository;
 import com.example.dreamhouse.repository.UserRepository;
 import com.example.dreamhouse.service.dto.ReviewDto;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,10 +31,14 @@ public class ReviewService {
         this.listingRepository = listingRepository;
     }
 
-    public Review addReview(ReviewDto reviewDto, UUID userId, UUID listingId) {
+    public Review addReview(ReviewDto reviewDto) {
+        UUID userId = UUID.fromString(((JwtAuthenticationToken) SecurityContextHolder
+                .getContext().getAuthentication()).getToken().getClaimAsString("sub"));
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Listing listing = listingRepository.findById(listingId)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        Listing listing = listingRepository.findById(reviewDto.getListingId())
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
 
         Review review = new Review();

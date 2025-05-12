@@ -31,8 +31,8 @@ public class PurchaseRequestController {
 
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
-    @PostMapping("/create")
-    public ResponseEntity<PurchaseRequest> createRequest(@RequestBody PurchaseRequestDTO requestDTO) {
+    @PostMapping("/create/{listingId}")
+    public ResponseEntity<PurchaseRequest> createRequest(@PathVariable UUID listingId) {
         JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = authentication.getToken();
         UUID id = UUID.fromString(jwt.getClaimAsString("sub"));
@@ -41,9 +41,8 @@ public class PurchaseRequestController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         PurchaseRequest request = requestService.createRequest(
-                requestDTO.getListingId(),
-                userId,
-                requestDTO.getMessage()
+                listingId,
+                userId
         );
 
         return ResponseEntity.status(201).body(request);

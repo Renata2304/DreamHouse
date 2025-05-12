@@ -25,8 +25,8 @@ public class ReviewController {
     // Adaugă o recenzie
     @PreAuthorize("hasAnyRole('client_admin', 'client_user')")
     @PostMapping("/add")
-    public ResponseEntity<Review> addReview(@RequestBody ReviewDto reviewDto, @RequestParam UUID userId, @RequestParam UUID listingId) {
-        Review review = reviewService.addReview(reviewDto, userId, listingId);
+    public ResponseEntity<Review> addReview(@RequestBody ReviewDto reviewDto) {
+        Review review = reviewService.addReview(reviewDto);
         return ResponseEntity.status(201).body(review);
     }
 

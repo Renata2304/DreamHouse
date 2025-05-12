@@ -30,7 +30,7 @@ public class PurchaseRequestService {
         this.emailService = emailService;
     }
 
-    public PurchaseRequest createRequest(UUID listingId, UUID userId, String message) {
+    public PurchaseRequest createRequest(UUID listingId, UUID userId) {
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
         User requester = userRepository.findById(userId)
@@ -41,7 +41,6 @@ public class PurchaseRequestService {
         PurchaseRequest request = new PurchaseRequest();
         request.setListing(listing);
         request.setRequester(requester);
-        request.setMessage(message);
         PurchaseRequest savedRequest = requestRepository.save(request);
 
         emailService.sendUserInterestNotification(

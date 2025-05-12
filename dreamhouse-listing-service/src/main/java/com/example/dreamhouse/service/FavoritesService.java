@@ -7,8 +7,13 @@ import com.example.dreamhouse.repository.FavoritesRepository;
 import com.example.dreamhouse.repository.ListingRepository;
 import com.example.dreamhouse.repository.UserRepository;
 import com.example.dreamhouse.service.dto.FavoritesDto;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,20 +29,25 @@ public class FavoritesService {
         this.listingRepository = listingRepository;
     }
 
-    public Favorites addFavorite(FavoritesDto favoriteDto) {
-        UUID userId = favoriteDto.getUserId();
-        UUID listingId = favoriteDto.getListingId();
+    public Favorites addFavorite(UUID listingId) {
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        Jwt jwt = authentication.getToken();
+        UUID userId = UUID.fromString(jwt.getClaimAsString("sub"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (favoritesRepository.existsByUserIdAndListingId(userId, listingId)) {
             throw new RuntimeException("Favorite already exists.");
         }
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Listing listing = listingRepository.findById(listingId).orElseThrow(() -> new RuntimeException("Listing not found"));
+        Listing listing = listingRepository.findById(listingId)
+                .orElseThrow(() -> new RuntimeException("Listing not found"));
 
         Favorites favorite = new Favorites(user, listing);
         return favoritesRepository.save(favorite);
     }
+
 
     public boolean isFavorite(UUID userId, UUID listingId) {
         return favoritesRepository.existsByUserIdAndListingId(userId, listingId);

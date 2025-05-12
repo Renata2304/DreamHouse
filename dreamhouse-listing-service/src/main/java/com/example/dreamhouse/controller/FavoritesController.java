@@ -23,8 +23,8 @@ public class FavoritesController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
     @PostMapping("/add")
-    public ResponseEntity<Favorites> addFavorite(@RequestBody FavoritesDto favoritesDto) {
-        Favorites favorite = favoritesService.addFavorite(favoritesDto);
+    public ResponseEntity<Favorites> addFavorite(@RequestParam UUID listingId) {
+        Favorites favorite = favoritesService.addFavorite(listingId);
         return ResponseEntity.status(201).body(favorite);
     }
 

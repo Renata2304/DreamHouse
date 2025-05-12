@@ -24,10 +24,11 @@ public class ImageController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
     @PostMapping("/add")
-    public ResponseEntity<?> addImage(@RequestBody ImageDto imageDto, @RequestParam UUID listingId) {
-        Image image = imageService.addImage(imageDto, listingId);
-        return ResponseEntity.status(201).body(image);
+    public ResponseEntity<?> addImages(@RequestBody List<ImageDto> imageDtos, @RequestParam UUID listingId) {
+        List<Image> images = imageService.addImages(imageDtos, listingId);
+        return ResponseEntity.status(201).body(images);
     }
+
 
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")

@@ -29,6 +29,7 @@ public class Review {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+
     // Getters and Setters
     public UUID getId() {
         return id;

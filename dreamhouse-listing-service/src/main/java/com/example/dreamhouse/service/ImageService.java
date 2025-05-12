@@ -24,15 +24,18 @@ public class ImageService {
         this.listingRepository = listingRepository;
     }
 
-    public Image addImage(ImageDto imageDto, UUID listingId) {
+    public List<Image> addImages(List<ImageDto> imageDtos, UUID listingId) {
         Listing listing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new IllegalArgumentException("Listing not found"));
 
-        Image image = new Image();
-        image.setListing(listing);
-        image.setImageUrl(imageDto.getImageUrl());
+        List<Image> images = imageDtos.stream().map(dto -> {
+            Image image = new Image();
+            image.setListing(listing);
+            image.setImageUrl(dto.getImageUrl());
+            return image;
+        }).collect(Collectors.toList());
 
-        return imageRepository.save(image);
+        return imageRepository.saveAll(images);
     }
 
     public List<ImageDto> getImagesByListing(UUID listingId) {
