@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>dreamhouse-listing-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>dreamhouse-listing-service</name>
     <description>dreamhouse-listing-service</description>
     <url/>
