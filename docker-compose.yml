@@ -55,18 +55,17 @@ services:
     image: quay.io/keycloak/keycloak:26.2
     container_name: dreamhouse-auth-service
     restart: always
-    command: start
+    command:
+      - start
     depends_on:
       - dreamhouse-auth-db
     ports:
       - "1100:8080"
-      - "1101:8443"
     environment:
-      KC_METRICS_ENABLED: true
-      KC_HEALTH_ENABLED: true
-      KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME: localhost
-      KC_HTTP_ENABLED: true
+      KC_METRICS_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
       KC_DB: postgres
       KC_DB_SCHEMA: auth
       KC_DB_URL: jdbc:postgresql://dreamhouse-auth-db:5432/postgres?ssl=allow
@@ -74,17 +73,13 @@ services:
       KC_DB_PASSWORD: postgres
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/dreamhouse.crt
-      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/dreamhouse.key
     volumes:
-      - dreamhouse-auth-data:/opt/keycloak/data
-      - ./certificates/dreamhouse.crt:/opt/keycloak/conf/dreamhouse.crt
-      - ./certificates/dreamhouse.key:/opt/keycloak/conf/dreamhouse.key
+      - keycloak-data:/opt/keycloak/data
     networks:
       dreamhouse-auth-network:
 
   dreamhouse-app-listing-service:
-    image: ciprian0411/dreamhouse-app-listing-service:0.0.2
+    image: ciprian0411/dreamhouse-app-listing-service:0.0.3
     container_name: dreamhouse-app-listing-service
     restart: always
     depends_on:
@@ -97,7 +92,7 @@ services:
       dreamhouse-app-network:
 
   dreamhouse-app-user-service:
-    image: ciprian0411/dreamhouse-app-user-service:0.0.2
+    image: ciprian0411/dreamhouse-app-user-service:0.0.3
     container_name: dreamhouse-app-user-service
     restart: always
     depends_on:
@@ -109,13 +104,12 @@ services:
       dreamhouse-auth-network:
       dreamhouse-app-network:
 
-  portainer:
+  dreamhouse-control-panel:
     image: portainer/portainer-ce:latest
-    container_name: portainer
+    container_name: dreamhouse-control-panel
     restart: always
     ports:
       - "9000:9000"
-      - "9443:9443"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -127,7 +121,6 @@ services:
     restart: always
     ports:
       - "8000:8000"
-      - "8001:8001"
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
@@ -140,13 +133,44 @@ services:
       - dreamhouse-auth-network
       - dreamhouse-app-network
 
+  dreamhouse-metrics-service:
+    image: prom/prometheus:v3.3.1
+    container_name: dreamhouse-metrics-service
+    restart: always
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./metrics-service/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+      - dreamhouse-metrics-network
+
+  dreamhouse-monitoring-service:
+    image: grafana/grafana:12.0.0
+    container_name: dreamhouse-monitoring-service
+    user: "0"
+    restart: always
+    ports:
+      - "9091:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - dreamhouse-metrics-network
+
 volumes:
   dreamhouse-app-db-vol:
   dreamhouse-auth-db-vol:
-  dreamhouse-auth-data:
+  keycloak-data:
   pgadmin-data:
   portainer-data:
+  prometheus-data:
+  grafana-data:
 
 networks:
-  dreamhouse-app-network:
   dreamhouse-auth-network:
+  dreamhouse-app-network:
+  dreamhouse-metrics-network:
