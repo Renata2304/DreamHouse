@@ -1,0 +1,13 @@
+.openapi-generator-ignore
+apis/RoleControllerApi.ts
+apis/UserControllerApi.ts
+apis/UserProfileControllerApi.ts
+apis/index.ts
+index.ts
+models/Listing.ts
+models/Role.ts
+models/User.ts
+models/UserProfile.ts
+models/UserProfileDto.ts
+models/index.ts
+runtime.ts
