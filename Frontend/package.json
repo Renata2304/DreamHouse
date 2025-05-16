@@ -8,10 +8,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest",
-    "gen:api:listings": "openapi-generator-cli generate -g typescript-fetch -i http://localhost:8000/listings/v3/api-docs -o src/api/listings --skip-validate-spec",
-    "gen:api:users": "openapi-generator-cli generate -g typescript-fetch -i http://localhost:8000/users/v3/api-docs -o src/api/users --skip-validate-spec",
-    "gen:api:all": "npm run gen:api:listings && npm run gen:api:users"
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -46,6 +43,7 @@
     "@vitejs/plugin-react": "4.3.4",
     "autoprefixer": "10.4.20",
     "babel-plugin-formatjs": "10.5.35",
+    "jsdom": "^26.1.0",
     "postcss": "8.4.49",
     "tailwindcss": "3.4.17",
     "typescript": "5.7.3",

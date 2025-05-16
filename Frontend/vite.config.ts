@@ -21,6 +21,21 @@ export default defineConfig({
     hmr: {
       protocol: "ws",
     },
+    proxy: {
+      // Proxy request path prefix to Kong running on localhost:8000
+      "/listings": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/users": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/keycloak": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+    },
   },
   test: {
     globals: true,

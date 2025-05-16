@@ -84,7 +84,7 @@ services:
       dreamhouse-auth-network:
 
   dreamhouse-app-listing-service:
-    image: ciprian0411/dreamhouse-app-listing-service:0.0.2
+    image: ciprian0411/dreamhouse-app-listing-service:0.0.1
     container_name: dreamhouse-app-listing-service
     restart: always
     depends_on:
@@ -97,7 +97,7 @@ services:
       dreamhouse-app-network:
 
   dreamhouse-app-user-service:
-    image: ciprian0411/dreamhouse-app-user-service:0.0.2
+    image: ciprian0411/dreamhouse-app-user-service:0.0.1
     container_name: dreamhouse-app-user-service
     restart: always
     depends_on:

@@ -5,10 +5,10 @@ import { Seo } from "@presentation/components/ui/Seo";
 import {
   TextField,
   Button,
-  Typography,
   Box,
   CircularProgress,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 export const HomePage = memo(() => {
   const { formatMessage } = useIntl();
@@ -26,9 +26,9 @@ export const HomePage = memo(() => {
     setJsonResponse(null);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/listings/listing/getByLocation?location=${encodeURIComponent(location)}`
-      );
+      const url = `/listings/listing/getByLocation?location=${encodeURIComponent(location)}`;
+
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
@@ -37,8 +37,9 @@ export const HomePage = memo(() => {
       const data = await response.json();
       setJsonResponse(data);
     } catch (err: any) {
-      console.error("Eroare:", err);
-      setError("Nu s-a putut prelua lista de proprietăți.");
+      console.error("Eroare fetch:", err);
+      setError("Nu s-a putut prelua lista de proprietăți. Verifică conexiunea și încearcă din nou.");
+      toast.error(formatMessage({ id: "notifications.errors.networkError" }));
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ export const HomePage = memo(() => {
             </Box>
           )}
 
-          {error && <Typography color="error">{error}</Typography>}
+          {error && <Box color="error.main">{error}</Box>}
 
           {!loading && jsonResponse && (
             <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[400px]">

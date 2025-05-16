@@ -8,6 +8,10 @@ services:
         paths:
           - /listings
         strip_path: true
+      - name: listing-docs-route
+        paths:
+          - /listings/v3/api-docs
+        strip_path: false
 
   - name: dreamhouse-app-user-service
     url: http://dreamhouse-app-user-service:8081
@@ -16,6 +20,10 @@ services:
         paths:
           - /users
         strip_path: true
+      - name: user-docs-route
+        paths:
+          - /users/v3/api-docs
+        strip_path: false
 
   - name: dreamhouse-auth-service
     url: http://dreamhouse-auth-service:8080
