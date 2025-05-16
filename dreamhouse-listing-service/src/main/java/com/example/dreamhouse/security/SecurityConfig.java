@@ -30,7 +30,8 @@ public class SecurityConfig {
                                         "/v3/api-docs",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
-                                        "/listing/getByLocation"
+                                        "/listing/getByLocation",
+                                        "/actuator/prometheus"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 );
