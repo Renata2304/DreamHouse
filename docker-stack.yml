@@ -1,0 +1,235 @@
+version: '3.8'
+
+services:
+  dreamhouse-app-db:
+    image: postgres:17-alpine
+    ports:
+      - target: 5432
+        published: 1200
+        protocol: tcp
+        mode: ingress
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - dreamhouse-app-db-vol:/var/lib/postgresql/data
+      - /root/DreamHouse/io-service/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  dreamhouse-auth-db:
+    image: postgres:17-alpine
+    ports:
+      - target: 5432
+        published: 1201
+        protocol: tcp
+        mode: ingress
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - dreamhouse-auth-db-vol:/var/lib/postgresql/data
+      - /root/DreamHouse/auth-service/auth_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+    networks:
+      - dreamhouse-auth-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  dreamhouse-db-manager:
+    image: dpage/pgadmin4:9.3
+    user: "5050:5050"
+    depends_on:
+      - dreamhouse-auth-db
+      - dreamhouse-app-db
+    ports:
+      - target: 80
+        published: 1202
+        protocol: tcp
+        mode: ingress
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dreamhouse.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  dreamhouse-auth-service:
+    image: quay.io/keycloak/keycloak:26.2
+    command:
+      - start
+    depends_on:
+      - dreamhouse-auth-db
+    ports:
+      - target: 8080
+        published: 1100
+        protocol: tcp
+        mode: ingress
+    environment:
+      KC_METRICS_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_DB: postgres
+      KC_DB_SCHEMA: auth
+      KC_DB_URL: jdbc:postgresql://dreamhouse-auth-db:5432/postgres?ssl=allow
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    networks:
+      - dreamhouse-auth-network
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+
+  dreamhouse-app-listing-service:
+    image: ciprian0411/dreamhouse-app-listing-service:0.0.3
+    depends_on:
+      - dreamhouse-auth-db
+      - dreamhouse-app-db
+    ports:
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: ingress
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+
+  dreamhouse-app-user-service:
+    image: ciprian0411/dreamhouse-app-user-service:0.0.3
+    depends_on:
+      - dreamhouse-auth-db
+      - dreamhouse-app-db
+    ports:
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: ingress
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+
+  dreamhouse-control-panel:
+    image: portainer/portainer-ce:latest
+    ports:
+      - target: 9000
+        published: 9000
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer-data:/data
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager
+
+  dreamhouse-api-gateway:
+    image: kong:3.9
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: ingress
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+    volumes:
+      - /root/DreamHouse/api-gateway/kong.yml:/usr/local/kong/kong.yml
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+
+  dreamhouse-metrics-service:
+    image: prom/prometheus:v3.3.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - target: 9090
+        published: 9090
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - /root/DreamHouse/metrics-service/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+      - dreamhouse-metrics-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+  dreamhouse-monitoring-service:
+    image: grafana/grafana:12.0.0
+    user: "0"
+    ports:
+      - target: 3000
+        published: 9091
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - dreamhouse-metrics-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+
+volumes:
+  dreamhouse-auth-db-vol:
+  dreamhouse-app-db-vol:
+  keycloak-data:
+  pgadmin-data:
+  portainer-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  dreamhouse-auth-network:
+    driver: overlay
+  dreamhouse-app-network:
+    driver: overlay
+  dreamhouse-metrics-network:
+    driver: overlay
