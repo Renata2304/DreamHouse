@@ -1,3 +1,5 @@
+import { List } from "@mui/material";
+
 /**
  * Here you can add more routes as constant to be used for routing within the application.
  */
@@ -6,5 +8,6 @@ export enum AppRoute {
     Login = "/login",
     Register = "/register",
     Users = "/users",
-    UserFiles = "/user-files"
+    UserFiles = "/user-files",
+    Listings = "/listings"
 }

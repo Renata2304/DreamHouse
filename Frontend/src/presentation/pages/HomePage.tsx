@@ -9,9 +9,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const HomePage = memo(() => {
   const { formatMessage } = useIntl();
+  const navigate = useNavigate(); // 🔥
 
   const [location, setLocation] = useState("");
   const [jsonResponse, setJsonResponse] = useState<any>(null);
@@ -27,7 +29,6 @@ export const HomePage = memo(() => {
 
     try {
       const url = `/listings/listing/getByLocation?location=${encodeURIComponent(location)}`;
-
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -36,6 +37,10 @@ export const HomePage = memo(() => {
 
       const data = await response.json();
       setJsonResponse(data);
+
+      // 🔥 Navighează spre ListingsPage cu rezultate
+      navigate("/listings", { state: { listings: data } });
+
     } catch (err: any) {
       console.error("Eroare fetch:", err);
       setError("Nu s-a putut prelua lista de proprietăți. Verifică conexiunea și încearcă din nou.");
@@ -44,6 +49,7 @@ export const HomePage = memo(() => {
       setLoading(false);
     }
   };
+
 
   return (
     <Fragment>
