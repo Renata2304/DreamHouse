@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - dreamhouse-app-db-vol:/var/lib/postgresql/data
-      - /root/DreamHouse/io-service/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+      - /app/io-service/app_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       - dreamhouse-auth-network
       - dreamhouse-app-network
@@ -36,7 +36,7 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - dreamhouse-auth-db-vol:/var/lib/postgresql/data
-      - /root/DreamHouse/auth-service/auth_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
+      - /app/auth-service/auth_db_init.sql:/docker-entrypoint-initdb.d/db_init.sql
     networks:
       - dreamhouse-auth-network
     deploy:
@@ -98,9 +98,12 @@ services:
     networks:
       - dreamhouse-auth-network
     deploy:
-      replicas: 3
+      replicas: 1
       restart_policy:
         condition: any
+      placement:
+        constraints:
+          - node.role == manager
 
   dreamhouse-app-listing-service:
     image: ciprian0411/dreamhouse-app-listing-service:0.0.3
@@ -170,7 +173,7 @@ services:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_LISTEN: "0.0.0.0:8001"
     volumes:
-      - /root/DreamHouse/api-gateway/kong.yml:/usr/local/kong/kong.yml
+      - /app/api-gateway/kong.yml:/usr/local/kong/kong.yml
     networks:
       - dreamhouse-auth-network
       - dreamhouse-app-network
@@ -189,7 +192,7 @@ services:
         protocol: tcp
         mode: ingress
     volumes:
-      - /root/DreamHouse/metrics-service/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /app/metrics-service/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     networks:
       - dreamhouse-auth-network
