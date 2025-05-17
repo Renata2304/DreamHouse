@@ -1,6 +1,19 @@
 server:
   port: 8081
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["prometheus"]
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
 spring:
   application:
     name: dreamhouse-user-service
@@ -14,7 +27,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/dreamhouse
+          issuer-uri: http://dreamhouse-auth-service:8080/realms/dreamhouse
           jwk-set-uri: http://dreamhouse-auth-service:8080/realms/dreamhouse/protocol/openid-connect/certs
       client:
         registration:

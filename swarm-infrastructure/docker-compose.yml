@@ -1,0 +1,71 @@
+services:
+  node1:
+    image: docker:dind
+    container_name: node1
+    privileged: true
+    hostname: node1
+    environment:
+      DOCKER_TLS_CERTDIR: "/certs"
+      PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
+    volumes:
+      - node1-certs:/certs/client
+      - node1-docker-data:/var/lib/docker
+      - ..:/app
+    networks:
+      swarm-network:
+        aliases:
+          - node1
+        ipv4_address: 172.18.0.11
+
+  node2:
+    image: docker:dind
+    container_name: node2
+    privileged: true
+    hostname: node2
+    environment:
+      DOCKER_TLS_CERTDIR: "/certs"
+      PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
+    volumes:
+      - node2-certs:/certs/client
+      - node2-docker-data:/var/lib/docker
+      - ..:/app
+    networks:
+      swarm-network:
+        aliases:
+          - node2
+        ipv4_address: 172.18.0.12
+
+  node3:
+    image: docker:dind
+    container_name: node3
+    privileged: true
+    hostname: node3
+    environment:
+      DOCKER_TLS_CERTDIR: "/certs"
+      PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
+    volumes:
+      - node3-certs:/certs/client
+      - node3-docker-data:/var/lib/docker
+      - ..:/app
+    networks:
+      swarm-network:
+        aliases:
+          - node3
+        ipv4_address: 172.18.0.13
+
+volumes:
+  node1-certs:
+  node1-docker-data:
+  node2-certs:
+  node2-docker-data:
+  node3-certs:
+  node3-docker-data:
+
+networks:
+  swarm-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.18.0.0/24"
+          gateway: "172.18.0.1"
