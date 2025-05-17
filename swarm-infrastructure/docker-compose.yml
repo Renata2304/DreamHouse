@@ -9,7 +9,8 @@ services:
       PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
     volumes:
       - node1-certs:/certs/client
-      - ../../DreamHouse:/app
+      - node1-docker-data:/var/lib/docker
+      - ..:/app
     networks:
       swarm-network:
         aliases:
@@ -26,7 +27,8 @@ services:
       PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
     volumes:
       - node2-certs:/certs/client
-      - ../../DreamHouse:/app
+      - node2-docker-data:/var/lib/docker
+      - ..:/app
     networks:
       swarm-network:
         aliases:
@@ -43,7 +45,8 @@ services:
       PS1: '\[\e[32;1m\]\h\[\e[0m\]:\[\e[34;1m\]\w\[\e[0m\] '
     volumes:
       - node3-certs:/certs/client
-      - ../../DreamHouse:/app
+      - node3-docker-data:/var/lib/docker
+      - ..:/app
     networks:
       swarm-network:
         aliases:
@@ -52,8 +55,11 @@ services:
 
 volumes:
   node1-certs:
+  node1-docker-data:
   node2-certs:
+  node2-docker-data:
   node3-certs:
+  node3-docker-data:
 
 networks:
   swarm-network:
