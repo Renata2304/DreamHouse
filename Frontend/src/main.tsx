@@ -29,8 +29,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           <BrowserRouter>
             {/* SnackbarProvider adds support for snackbar notifications */}
             <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-              {/* Here the actual application contend and logic is added. */}
-              <App />
+            {/* Here the actual application contend and logic is added. */}
+            <App />
             </SnackbarProvider>
           </BrowserRouter>
         </QueryClientProvider>
