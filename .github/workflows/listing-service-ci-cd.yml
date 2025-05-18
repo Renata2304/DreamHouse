@@ -39,8 +39,9 @@ jobs:
       uses: mr-smithers-excellent/docker-build-push@v5
       with:
         image: ciprian0411/dreamhouse-app-listing-service
+        working-directory: ./dreamhouse-listing-service
         tags: latest,${{ steps.get_version.outputs.version }}
         registry: docker.io
-        dockerfile: ./dreamhouse-listing-service/Dockerfile
+        dockerfile: Dockerfile
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
