@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>dreamhouse-user-service</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.4</version>
     <name>dreamhouse-user-profile-service</name>
     <description>dreamhouse-user-profile-service</description>
     <url/>
@@ -124,6 +124,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -133,6 +141,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>dreamhouse-user-service</finalName>
     </build>
 
 </project>

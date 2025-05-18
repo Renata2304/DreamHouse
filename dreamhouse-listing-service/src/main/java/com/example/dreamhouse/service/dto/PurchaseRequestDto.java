@@ -2,7 +2,7 @@ package com.example.dreamhouse.service.dto;
 
 import java.util.UUID;
 
-public class PurchaseRequestDTO {
+public class PurchaseRequestDto {
     private UUID listingId;
     private String message;
 
