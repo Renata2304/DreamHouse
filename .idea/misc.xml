@@ -10,6 +10,8 @@
       <list>
         <option value="$PROJECT_DIR$/dreamhouse-user-service/pom.xml" />
         <option value="$PROJECT_DIR$/dreamhouse-listing-service/pom.xml" />
+        <option value="$PROJECT_DIR$/feedback-service/pom.xml" />
+        <option value="$PROJECT_DIR$/dreamhouse-feedback-service/pom.xml" />
       </list>
     </option>
   </component>

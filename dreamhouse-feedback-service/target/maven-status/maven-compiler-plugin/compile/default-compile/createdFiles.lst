@@ -1,0 +1,9 @@
+com\dreamhouse\feedbackservice\service\EmailService.class
+com\dreamhouse\feedbackservice\repository\FeedbackRepository.class
+com\dreamhouse\feedbackservice\model\Feedback$FeedbackBuilder.class
+com\dreamhouse\feedbackservice\FeedbackServiceApplication.class
+com\dreamhouse\feedbackservice\dto\FeedbackRequest.class
+com\dreamhouse\feedbackservice\service\FeedbackService.class
+com\dreamhouse\feedbackservice\dto\FeedbackRequest$FeedbackRequestBuilder.class
+com\dreamhouse\feedbackservice\controller\FeedbackController.class
+com\dreamhouse\feedbackservice\model\Feedback.class
