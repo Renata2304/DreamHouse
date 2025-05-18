@@ -41,21 +41,6 @@ spring:
           keycloak:
             issuer-uri: http://localhost:1100/realms/dreamhouse
 
-  mail:
-    host: smtp.mailtrap.io
-    port: 2525
-    username: 9b12429aec3986
-    password: d86c56ad6fe97b
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          connectiontimeout: 5000
-          timeout: 3000
-          writetimeout: 5000
-
 jwt:
   auth:
     converter:
