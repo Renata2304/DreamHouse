@@ -141,6 +141,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <finalName>dreamhouse-listing-service</finalName>
     </build>
 
 </project>
