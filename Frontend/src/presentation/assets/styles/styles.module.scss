@@ -1,0 +1,11 @@
+@import "./abstracts/colors";
+
+:export {
+    gradientBlue: $gradientBlue;
+    lightGradientBlue: $lightGradientBlue;
+    gradientRed: $gradientRed;
+    lightGradientRed: $lightGradientRed;
+    gradientYellow: $gradientYellow;
+    lightGradientYellow: $lightGradientYellow;
+    gradientPurple: $gradientPurple;
+}
