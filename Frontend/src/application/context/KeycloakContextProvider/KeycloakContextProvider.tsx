@@ -14,20 +14,24 @@ export const KeycloakContextProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const keycloak: KeycloakInstance = new (Keycloak as any)({
-      url: "http://localhost:1100/",
+      url: "http://localhost:1100",
       realm: "dreamhouse",
       clientId: "backend-rest-api",
     });
 
-    keycloak.init({ onLoad: "login-required" }).then((authenticated) => {
-      if (authenticated) {
-        localStorage.setItem("token", keycloak.token ?? "");
-        dispatch({ type: "setKeycloakInstance", payload: keycloak });
-        dispatch({ type: "setAuthenticated", payload: true });
-      } else {
+    keycloak.init({ onLoad: "login-required" })
+      .success((authenticated: boolean) => {
+        if (authenticated) {
+          localStorage.setItem("token", keycloak.token ?? "");
+          dispatch({ type: "setKeycloakInstance", payload: keycloak });
+          dispatch({ type: "setAuthenticated", payload: true });
+        } else {
+          dispatch({ type: "setAuthenticated", payload: false });
+        }
+      })
+      .error(() => {
         dispatch({ type: "setAuthenticated", payload: false });
-      }
-    });
+      });
   }, []);
 
   const api: KeycloakAPI = useMemo(() => {
