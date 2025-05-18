@@ -49,7 +49,7 @@ public class UserService {
     // Convert User entity to UserDto
     public UserDto convertToDto(User user) {
         // Get the first role from the list of roles or "UNKNOWN" if the list is empty
-        String role = user.getRoles().isEmpty() ? "UNKNOWN" : String.valueOf(user.getRoles().get(0));
+        String role = user.getRoles().isEmpty() ? "UNKNOWN" : String.valueOf(user.getRoles().getFirst());
 
         return new UserDto()
                 .setId(user.getId())
