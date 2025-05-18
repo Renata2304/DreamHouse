@@ -77,6 +77,15 @@ CREATE TABLE IF NOT EXISTS user_role (
                                     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
+CREATE TABLE IF NOT EXISTS feedbacks (
+                                   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                   satisfaction_level VARCHAR(255) NOT NULL,
+                                   category VARCHAR(255) NOT NULL,
+                                   comments TEXT NOT NULL,
+                                   want_updates BOOLEAN,
+                                   created_at TIMESTAMP DEFAULT NOW()
+);
+
 CREATE SEQUENCE IF NOT EXISTS roles_seq START WITH 3 INCREMENT BY 1;
 
 INSERT INTO roles (id, name)

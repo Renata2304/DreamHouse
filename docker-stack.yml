@@ -106,7 +106,7 @@ services:
           - node.role == manager
 
   dreamhouse-app-listing-service:
-    image: ciprian0411/dreamhouse-app-listing-service:0.0.3
+    image: ciprian0411/dreamhouse-app-listing-service:latest
     depends_on:
       - dreamhouse-auth-db
       - dreamhouse-app-db
@@ -124,7 +124,7 @@ services:
         condition: any
 
   dreamhouse-app-user-service:
-    image: ciprian0411/dreamhouse-app-user-service:0.0.3
+    image: ciprian0411/dreamhouse-app-user-service:latest
     depends_on:
       - dreamhouse-auth-db
       - dreamhouse-app-db
@@ -135,6 +135,22 @@ services:
         mode: ingress
     networks:
       - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+
+  dreamhouse-app-feedback-service:
+    image: ciprian0411/dreamhouse-app-feedback-service:latest
+    depends_on:
+      - dreamhouse-app-db
+    ports:
+      - target: 8082
+        published: 8082
+        protocol: tcp
+        mode: ingress
+    networks:
       - dreamhouse-app-network
     deploy:
       replicas: 3

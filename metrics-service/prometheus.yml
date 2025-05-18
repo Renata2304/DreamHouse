@@ -11,6 +11,12 @@ scrape_configs:
     static_configs:
       - targets: [ 'dreamhouse-app-user-service:8081' ]
 
+  - job_name: 'dreamhouse-app-feedback-service'
+    scrape_interval: 5s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'dreamhouse-app-feedback-service:8082' ]
+
   - job_name: 'dreamhouse-auth-service'
     scrape_interval: 5s
     metrics_path: '/metrics'

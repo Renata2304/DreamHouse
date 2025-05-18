@@ -25,6 +25,18 @@ services:
           - /users/v3/api-docs
         strip_path: false
 
+  - name: dreamhouse-app-feedback-service
+    url: http://dreamhouse-app-feedback-service:8082
+    routes:
+      - name: user-route
+        paths:
+          - /feedbacks
+        strip_path: true
+      - name: user-docs-route
+        paths:
+          - /feedbacks/v3/api-docs
+        strip_path: false
+
   - name: dreamhouse-auth-service
     url: http://dreamhouse-auth-service:8080
     routes:

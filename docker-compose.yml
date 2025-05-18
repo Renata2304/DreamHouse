@@ -79,7 +79,7 @@ services:
       dreamhouse-auth-network:
 
   dreamhouse-app-listing-service:
-    image: ciprian0411/dreamhouse-app-listing-service:0.0.3
+    image: ciprian0411/dreamhouse-app-listing-service:latest
     container_name: dreamhouse-app-listing-service
     restart: always
     depends_on:
@@ -92,7 +92,7 @@ services:
       dreamhouse-app-network:
 
   dreamhouse-app-user-service:
-    image: ciprian0411/dreamhouse-app-user-service:0.0.3
+    image: ciprian0411/dreamhouse-app-user-service:latest
     container_name: dreamhouse-app-user-service
     restart: always
     depends_on:
@@ -102,6 +102,17 @@ services:
       - "8081:8081"
     networks:
       dreamhouse-auth-network:
+      dreamhouse-app-network:
+
+  dreamhouse-app-feedback-service:
+    image: ciprian0411/dreamhouse-app-feedback-service:latest
+    container_name: dreamhouse-app-feedback-service
+    restart: always
+    depends_on:
+      - dreamhouse-app-db
+    ports:
+      - "8082:8082"
+    networks:
       dreamhouse-app-network:
 
   dreamhouse-control-panel:
