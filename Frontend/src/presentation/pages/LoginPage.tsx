@@ -47,9 +47,10 @@ export const LoginPage = memo(() => {
             + `?client_id=${clientId}`
             + `&redirect_uri=${redirectUri}`
             + `&response_type=code`
-            + `&scope=openid profile email`
+            + `&scope=openid`
             + `&code_challenge=${codeChallenge}`
-            + `&code_challenge_method=S256`;
+            + `&code_challenge_method=S256`
+            + `&kc_idp_hint=dreamhouse`;
         
         window.location.href = loginUrl;
     };
