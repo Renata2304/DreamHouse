@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DreamHouse.iml" filepath="$PROJECT_DIR$/.idea/DreamHouse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dreamhouse-listing-service/dreamhouse-listing-service.iml" filepath="$PROJECT_DIR$/dreamhouse-listing-service/dreamhouse-listing-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dreamhouse-user-service/dreamhouse-user-service.iml" filepath="$PROJECT_DIR$/dreamhouse-user-service/dreamhouse-user-service.iml" />
     </modules>
   </component>
 </project>
