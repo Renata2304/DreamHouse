@@ -1,7 +1,7 @@
 {
-  "name": "mobylab-web-app",
+  "name": "dreamhouse-frontend-service",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "start": "echo Starting the development server && npm run dev",

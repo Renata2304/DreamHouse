@@ -12,7 +12,7 @@ import './index.css'
 
 const queryClient = new QueryClient();
 
-/* 
+/*
  * This is the entry point of the application, this corresponds to the configuration for injecting multiple services in the application.
  */
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

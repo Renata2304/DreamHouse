@@ -157,6 +157,29 @@ services:
       restart_policy:
         condition: any
 
+  dreamhouse-app-frontend-service:
+    image: ciprian0411/dreamhouse-app-frontend-service:latest
+    depends_on:
+      - dreamhouse-auth-service
+      - dreamhouse-app-listing-service
+      - dreamhouse-app-user-service
+      - dreamhouse-app-feedback-service
+    ports:
+      - target: 3001
+        published: 3001
+        protocol: tcp
+        mode: ingress
+    networks:
+      - dreamhouse-auth-network
+      - dreamhouse-app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager
+
   dreamhouse-control-panel:
     image: portainer/portainer-ce:latest
     ports:

@@ -115,6 +115,21 @@ services:
     networks:
       dreamhouse-app-network:
 
+  dreamhouse-app-frontend-service:
+    image: ciprian0411/dreamhouse-app-frontend-service:latest
+    container_name: dreamhouse-app-frontend-service
+    restart: always
+    depends_on:
+      - dreamhouse-auth-service
+      - dreamhouse-app-listing-service
+      - dreamhouse-app-user-service
+      - dreamhouse-app-feedback-service
+    ports:
+      - "3001:3001"
+    networks:
+      dreamhouse-auth-network:
+      dreamhouse-app-network:
+
   dreamhouse-control-panel:
     image: portainer/portainer-ce:latest
     container_name: dreamhouse-control-panel

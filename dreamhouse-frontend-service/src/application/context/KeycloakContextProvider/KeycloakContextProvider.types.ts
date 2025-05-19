@@ -1,12 +1,12 @@
-import Keycloak from "keycloak-js";
+import type { KeycloakInstance } from "keycloak-js";
 
 export interface KeycloakState {
-  keycloak: Keycloak | null;
+  keycloak: KeycloakInstance | null;
   authenticated: boolean;
 }
 
 export type KeycloakContextActions =
-  | { type: "setKeycloakInstance"; payload: Keycloak }
+  | { type: "setKeycloakInstance"; payload: KeycloakInstance }
   | { type: "setAuthenticated"; payload: boolean };
 
 export interface KeycloakAPI {
