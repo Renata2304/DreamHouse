@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.format.DateTimeFormatter;
 
 @Service
-@RequiredArgsConstructor
 public class EmailService {
     private final JavaMailSender mailSender;
 
@@ -21,6 +20,10 @@ public class EmailService {
 
     @Value("${feedback.notification.email}")
     private String notificationEmail;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void sendFeedbackNotification(Feedback feedback) {
         try {
