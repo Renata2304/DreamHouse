@@ -15,10 +15,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/feedback")
-@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class FeedbackController {
     private final FeedbackService feedbackService;
+
+    public FeedbackController(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
+    }
 
     @PostMapping
     public ResponseEntity<?> createFeedback(@RequestBody FeedbackRequest request) {
