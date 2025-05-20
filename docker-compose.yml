@@ -113,6 +113,7 @@ services:
     ports:
       - "8082:8082"
     networks:
+      dreamhouse-auth-network:
       dreamhouse-app-network:
 
   dreamhouse-app-frontend-service:

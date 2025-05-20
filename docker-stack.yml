@@ -151,6 +151,7 @@ services:
         protocol: tcp
         mode: ingress
     networks:
+      - dreamhouse-auth-network
       - dreamhouse-app-network
     deploy:
       replicas: 3

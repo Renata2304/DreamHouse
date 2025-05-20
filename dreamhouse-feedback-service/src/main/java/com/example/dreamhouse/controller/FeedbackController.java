@@ -15,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/feedback")
+@SecurityRequirement(name = "bearerAuth")
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
@@ -22,7 +23,6 @@ public class FeedbackController {
         this.feedbackService = feedbackService;
     }
 
-    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
     @PostMapping
     public ResponseEntity<?> createFeedback(@RequestBody FeedbackRequest request) {
