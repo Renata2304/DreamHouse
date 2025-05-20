@@ -11,13 +11,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final EmailService emailService;
 
-    @Transactional
+    public FeedbackService(FeedbackRepository feedbackRepository, EmailService emailService) {
+        this.feedbackRepository = feedbackRepository;
+        this.emailService = emailService;
+    }
+
     public Feedback createFeedback(FeedbackRequest request) {
         Feedback feedback = new Feedback();
         feedback.setSatisfactionLevel(request.getSatisfactionLevel());
