@@ -34,15 +34,15 @@ export const LoginPage = memo(() => {
         const keycloakUrl = 'http://localhost:1100';
         const realm = 'dreamhouse';
         const clientId = 'backend-rest-api';
-        const redirectUri = encodeURIComponent('http://localhost:3000/');
-        
+        const redirectUri = encodeURIComponent('http://localhost:3001/');
+
         // Generate PKCE values
         const codeVerifier = generateRandomString(128);
         const codeChallenge = await generateCodeChallenge(codeVerifier);
-        
+
         // Store code verifier in session storage to use it later
         sessionStorage.setItem('code_verifier', codeVerifier);
-        
+
         const loginUrl = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/auth`
             + `?client_id=${clientId}`
             + `&redirect_uri=${redirectUri}`
@@ -51,7 +51,7 @@ export const LoginPage = memo(() => {
             + `&code_challenge=${codeChallenge}`
             + `&code_challenge_method=S256`
             + `&kc_idp_hint=dreamhouse`;
-        
+
         window.location.href = loginUrl;
     };
 
@@ -59,8 +59,8 @@ export const LoginPage = memo(() => {
         <Fragment>
             <Seo title="MobyLab Web App | Login" />
             <WebsiteLayout>
-                <Box sx={{ 
-                    padding: "0px 50px", 
+                <Box sx={{
+                    padding: "0px 50px",
                     textAlign: "center",
                     display: 'flex',
                     flexDirection: 'column',
@@ -68,8 +68,8 @@ export const LoginPage = memo(() => {
                     minHeight: '60vh',
                     justifyContent: 'center'
                 }}>
-                    <Button 
-                        variant="contained" 
+                    <Button
+                        variant="contained"
                         onClick={redirectToKeycloakLogin}
                         size="large"
                         sx={{ minWidth: '200px', mb: 2 }}

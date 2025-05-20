@@ -25,7 +25,7 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
                             client_id: 'backend-rest-api',
                             code_verifier: codeVerifier,
                             code: code,
-                            redirect_uri: 'http://localhost:3000/'
+                            redirect_uri: 'http://localhost:3001/'
                         })
                     });
 
@@ -34,7 +34,7 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
                     }
 
                     const tokens = await response.json();
-                    
+
                     // Store the tokens
                     localStorage.setItem('token', tokens.access_token);
                     localStorage.setItem('refresh_token', tokens.refresh_token);
@@ -56,4 +56,4 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
     }, [location, navigate]);
 
     return <>{children}</>;
-}; 
+};
