@@ -10,10 +10,13 @@ import {
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "@application/store";
+import { authenticatedFetch, authenticatedFetchJson } from "@infrastructure/utils/api";
 
 export const HomePage = memo(() => {
   const { formatMessage } = useIntl();
-  const navigate = useNavigate(); // 🔥
+  const navigate = useNavigate();
+  const { token } = useAppSelector(x => x.profileReducer);
 
   const [location, setLocation] = useState("");
   const [jsonResponse, setJsonResponse] = useState<any>(null);
@@ -29,7 +32,7 @@ export const HomePage = memo(() => {
 
     try {
       const url = `/listings/listing/getByLocation?location=${encodeURIComponent(location)}`;
-      const response = await fetch(url);
+      const response = await authenticatedFetch(url);
 
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
@@ -38,7 +41,6 @@ export const HomePage = memo(() => {
       const data = await response.json();
       setJsonResponse(data);
 
-      // 🔥 Navighează spre ListingsPage cu rezultate
       navigate("/listings", { state: { listings: data } });
 
     } catch (err: any) {
@@ -49,7 +51,6 @@ export const HomePage = memo(() => {
       setLoading(false);
     }
   };
-
 
   return (
     <Fragment>

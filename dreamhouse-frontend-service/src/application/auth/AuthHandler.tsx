@@ -1,10 +1,13 @@
 import { FC, PropsWithChildren, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AppRoute } from '../../routes';
+import { useAppDispatch } from '@application/store';
+import { setToken } from '@application/state-slices';
 
 export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const handleAuthCallback = async () => {
@@ -29,14 +32,16 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
                         })
                     });
 
+                    console.log(response);
+
                     if (!response.ok) {
                         throw new Error('Token exchange failed');
                     }
 
                     const tokens = await response.json();
 
-                    // Store the tokens
-                    localStorage.setItem('token', tokens.access_token);
+                    // Store the tokens and update Redux state
+                    dispatch(setToken(tokens.access_token));
                     localStorage.setItem('refresh_token', tokens.refresh_token);
 
                     // Clean up session storage
@@ -47,13 +52,14 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
                     window.history.replaceState({}, document.title, cleanUrl);
                 } catch (error) {
                     console.error('Authentication error:', error);
-                    navigate(AppRoute.Login);
+                    // Since we removed the login page, we'll just stay on the current page
+                    // and let the user try again
                 }
             }
         };
 
         handleAuthCallback();
-    }, [location, navigate]);
+    }, [location, navigate, dispatch]);
 
     return <>{children}</>;
 };

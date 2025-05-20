@@ -5,7 +5,6 @@ import { CssBaseline } from "@mui/material";
 import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LanguageContextProvider } from "@application/context/LanguageContextProvider";
-import { BrowserRouter } from "react-router-dom";
 import { store } from "@application/store";
 import { SnackbarProvider } from 'notistack';
 import './index.css'
@@ -25,14 +24,11 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       <LanguageContextProvider>
         {/* QueryClientProvider adds the query client and internal state. */}
         <QueryClientProvider client={queryClient}>
-          {/* BrowserRouter adds routing withing the browser. */}
-          <BrowserRouter>
-            {/* SnackbarProvider adds support for snackbar notifications */}
-            <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+          {/* SnackbarProvider adds support for snackbar notifications */}
+          <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
             {/* Here the actual application contend and logic is added. */}
             <App />
-            </SnackbarProvider>
-          </BrowserRouter>
+          </SnackbarProvider>
         </QueryClientProvider>
       </LanguageContextProvider>
     </Provider>

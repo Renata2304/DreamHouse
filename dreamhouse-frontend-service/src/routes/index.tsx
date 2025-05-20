@@ -1,11 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
-import { LoginPage } from "@presentation/pages/LoginPage";
-import { RegisterPage } from "@presentation/pages/RegisterPage";
 import { AuthHandler } from "@application/auth/AuthHandler";
+import { HomePage } from "@presentation/pages/HomePage";
+import { ListingsPage } from "@presentation/pages/ListingPage";
+import { UsersPage } from "@presentation/pages/UsersPage";
+import { UserFilesPage } from "@presentation/pages/UserFilesPage";
 
 export enum AppRoute {
-    Login = "/login",
-    Register = "/register"
+    Index = "/",
+    Users = "/users",
+    UserFiles = "/user-files",
+    Listings = "/listings"
 }
 
 export const router = createBrowserRouter([
@@ -14,12 +18,20 @@ export const router = createBrowserRouter([
         element: <AuthHandler />,
         children: [
             {
-                path: AppRoute.Login,
-                element: <LoginPage />
+                path: AppRoute.Index,
+                element: <HomePage />
             },
             {
-                path: AppRoute.Register,
-                element: <RegisterPage />
+                path: AppRoute.Listings,
+                element: <ListingsPage />
+            },
+            {
+                path: AppRoute.Users,
+                element: <UsersPage />
+            },
+            {
+                path: AppRoute.UserFiles,
+                element: <UserFilesPage />
             }
         ]
     }
