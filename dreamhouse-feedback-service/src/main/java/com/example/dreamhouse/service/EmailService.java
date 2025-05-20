@@ -15,10 +15,10 @@ import java.time.format.DateTimeFormatter;
 public class EmailService {
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
+    @Value("feedback@dreamhouse.com")
     private String fromEmail;
 
-    @Value("feedback@dreamhouse.com")
+    @Value("admin@dreamhouse.com")
     private String notificationEmail;
 
     public EmailService(JavaMailSender mailSender) {
