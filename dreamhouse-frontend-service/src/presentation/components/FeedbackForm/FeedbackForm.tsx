@@ -45,7 +45,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ position }) => {
     e.preventDefault();
     try {
       console.log('Submitting feedback:', formData);
-      const response = await axios.post('http://localhost:8085/api/feedback', formData, {
+      const response = await axios.post('http://localhost:8082/api/feedback', formData, {
         headers: {
           'Content-Type': 'application/json',
         }
@@ -62,7 +62,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ position }) => {
     } catch (error: any) {
       console.error('Feedback submission error:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Failed to submit feedback';
-      enqueueSnackbar(errorMessage, { 
+      enqueueSnackbar(errorMessage, {
         variant: 'error',
         autoHideDuration: 5000
       });
@@ -168,4 +168,4 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ position }) => {
   );
 };
 
-export default FeedbackForm; 
+export default FeedbackForm;
