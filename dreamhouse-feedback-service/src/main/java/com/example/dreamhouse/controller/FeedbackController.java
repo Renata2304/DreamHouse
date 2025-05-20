@@ -24,7 +24,7 @@ public class FeedbackController {
         this.feedbackService = feedbackService;
     }
 
-    @PreAuthorize("hasRole('client_admin')")
+    @PreAuthorize("hasRole('client_user')")
     @PostMapping
     public ResponseEntity<?> createFeedback(@RequestBody FeedbackRequest request) {
         try {
