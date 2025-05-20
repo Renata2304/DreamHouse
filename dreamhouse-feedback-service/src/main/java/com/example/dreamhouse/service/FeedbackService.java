@@ -3,9 +3,7 @@ package com.example.dreamhouse.service;
 import com.example.dreamhouse.service.dto.FeedbackRequest;
 import com.example.dreamhouse.entity.Feedback;
 import com.example.dreamhouse.repository.FeedbackRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;

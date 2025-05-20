@@ -3,19 +3,20 @@ package com.example.dreamhouse.controller;
 import com.example.dreamhouse.service.dto.FeedbackRequest;
 import com.example.dreamhouse.entity.Feedback;
 import com.example.dreamhouse.service.FeedbackService;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/feedback")
 @CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearerAuth")
 public class FeedbackController {
     private final FeedbackService feedbackService;
 
@@ -23,6 +24,7 @@ public class FeedbackController {
         this.feedbackService = feedbackService;
     }
 
+    @PreAuthorize("hasRole('client_admin')")
     @PostMapping
     public ResponseEntity<?> createFeedback(@RequestBody FeedbackRequest request) {
         try {
@@ -35,19 +37,6 @@ public class FeedbackController {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Failed to submit feedback: " + e.getMessage()));
-        }
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getAllFeedback() {
-        try {
-            List<Feedback> feedbacks = feedbackService.getAllFeedback();
-            return ResponseEntity.ok(feedbacks);
-        } catch (Exception e) {
-            log.error("Error retrieving feedback: ", e);
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("message", "Failed to retrieve feedback: " + e.getMessage()));
         }
     }
 } 
