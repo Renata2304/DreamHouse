@@ -18,7 +18,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${feedback.notification.email}")
+    @Value("feedback@dreamhouse.com")
     private String notificationEmail;
 
     public EmailService(JavaMailSender mailSender) {
