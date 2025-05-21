@@ -79,7 +79,7 @@ services:
       dreamhouse-auth-network:
 
   dreamhouse-app-listing-service:
-    image: ciprian0411/dreamhouse-app-listing-service:latest
+    image: ciprian0411/dreamhouse-app-listing-service:0.0.4-frontend
     container_name: dreamhouse-app-listing-service
     restart: always
     depends_on:
@@ -92,7 +92,7 @@ services:
       dreamhouse-app-network:
 
   dreamhouse-app-user-service:
-    image: ciprian0411/dreamhouse-app-user-service:latest
+    image: ciprian0411/dreamhouse-app-user-service:0.0.4-frontend
     container_name: dreamhouse-app-user-service
     restart: always
     depends_on:
@@ -105,7 +105,7 @@ services:
       dreamhouse-app-network:
 
   dreamhouse-app-feedback-service:
-    image: ciprian0411/dreamhouse-app-feedback-service:latest
+    image: ciprian0411/dreamhouse-app-feedback-service:0.0.4-frontend
     container_name: dreamhouse-app-feedback-service
     restart: always
     depends_on:
