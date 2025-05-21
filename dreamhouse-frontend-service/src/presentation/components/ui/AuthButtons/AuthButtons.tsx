@@ -90,14 +90,14 @@ export const AuthButtons = () => {
     };
 
     const handleLogout = () => {
+        keycloak.logout({ 
+            redirectUri: window.location.origin 
+        });
         localStorage.clear();
         sessionStorage.clear();
         
         dispatch(resetProfile());
         
-        keycloak.logout({ 
-            redirectUri: window.location.origin 
-        });
     };
 
     if (loggedIn) {

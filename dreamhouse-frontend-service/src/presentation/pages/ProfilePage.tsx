@@ -62,7 +62,7 @@ export const ProfilePage = memo(() => {
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/me', {
+        const response = await fetch('http://localhost:8000/users/profiles/me', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -88,7 +88,7 @@ export const ProfilePage = memo(() => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/image', {
+    const response = await fetch('http://localhost:8000/users/profiles/image', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -103,7 +103,7 @@ export const ProfilePage = memo(() => {
   };
 
   const handleImageDelete = async () => {
-    const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/image', {
+    const response = await fetch('http://localhost:8000/users/profiles/image', {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -140,7 +140,7 @@ export const ProfilePage = memo(() => {
               type="profile"
               onUpload={handleImageUpload}
               onDelete={handleImageDelete}
-              currentImageUrl={profile?.imagePath ? `http://dreamhouse-api-gateway:8000/files/profiles/${profile.imagePath}` : undefined}
+              currentImageUrl={profile?.imagePath ? `http://localhost:8000/files/profiles/${profile.imagePath}` : undefined}
               token={token || ''}
             />
 

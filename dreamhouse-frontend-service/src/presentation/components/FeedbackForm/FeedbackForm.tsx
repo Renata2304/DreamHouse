@@ -40,6 +40,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ position }) => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const token = localStorage.getItem('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +49,7 @@ const FeedbackForm: React.FC<FeedbackFormProps> = ({ position }) => {
       const response = await axios.post('http://localhost:8082/api/feedback', formData, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         }
       });
       console.log('Feedback submission response:', response.data);

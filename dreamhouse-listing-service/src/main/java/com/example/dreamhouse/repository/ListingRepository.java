@@ -13,4 +13,6 @@ import java.util.UUID;
 public interface ListingRepository extends JpaRepository<Listing, UUID> {
 
     Optional<List<Listing>> findByLocation(String location);
+
+
 }

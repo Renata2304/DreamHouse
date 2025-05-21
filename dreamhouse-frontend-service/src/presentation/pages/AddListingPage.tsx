@@ -56,7 +56,7 @@ export const AddListingPage = memo(() => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://dreamhouse-api-gateway:8000/listings/listing/addListing', {
+      const response = await fetch('http://localhost:8000/listings/listing/addListing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export const AddListingPage = memo(() => {
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}/image`, {
+    const response = await fetch(`http://localhost:8000/listings/listing/${listingId}/image`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -108,7 +108,7 @@ export const AddListingPage = memo(() => {
   };
 
   const handleImageDelete = async () => {
-    const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}/image`, {
+    const response = await fetch(`http://localhost:8000/listings/listing/${listingId}/image`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -125,7 +125,7 @@ export const AddListingPage = memo(() => {
 
   const fetchListing = async () => {
     try {
-      const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}`, {
+      const response = await fetch(`http://localhost:8000/listings/listing/${listingId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -152,7 +152,7 @@ export const AddListingPage = memo(() => {
               type="listing"
               onUpload={handleImageUpload}
               onDelete={handleImageDelete}
-              currentImageUrl={listing?.imagePath ? `http://dreamhouse-api-gateway:8000/files/listings/${listing.imagePath}` : undefined}
+              currentImageUrl={listing?.imagePath ? `http://localhost:8000/files/listings/${listing.imagePath}` : undefined}
               token={token || ''}
             />
 

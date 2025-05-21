@@ -39,6 +39,7 @@ public class ListingService {
         return optionalListingList.map(listings ->
                 listings.stream()
                         .map(listing -> new ListingDto()
+                                .setId(listing.getId())
                                 .setTitle(listing.getTitle())
                                 .setDescription(listing.getDescription())
                                 .setPrice(listing.getPrice())
@@ -46,6 +47,7 @@ public class ListingService {
                         .collect(Collectors.toList())
         ).orElse(Collections.emptyList());
     }
+
 
     public Listing addListing(ListingDto listingDto) {
         JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();

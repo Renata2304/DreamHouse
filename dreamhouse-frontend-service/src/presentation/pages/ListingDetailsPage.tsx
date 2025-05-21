@@ -12,23 +12,35 @@ import {
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
 import { useIntl } from "react-intl";
+import { Listing } from "../../api/listings/models/Listing";
 
 export const ListingDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
-  const [listing, setListing] = useState<any>(null);
+  const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchListingDetails = async () => {
+      if (!id) {
+        setError("No listing ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${id}`);
-        if (!response.ok) throw new Error('Failed to fetch listing details');
+        const response = await fetch(`http://localhost:8000/listing/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch listing details');
+        }
         const data = await response.json();
         setListing(data);
       } catch (error) {
         console.error('Error fetching listing details:', error);
+        setError("Failed to fetch listing details");
       } finally {
         setLoading(false);
       }
@@ -47,12 +59,12 @@ export const ListingDetailsPage = () => {
     );
   }
 
-  if (!listing) {
+  if (error || !listing) {
     return (
       <WebsiteLayout>
         <Box className="px-[50px] py-6">
           <Typography variant="h5" color="error">
-            Listing not found
+            {error || "Listing not found"}
           </Typography>
           <Button
             variant="contained"
