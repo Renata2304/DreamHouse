@@ -100,8 +100,6 @@ export const ProfilePage = memo(() => {
       throw new Error('Failed to upload image');
     }
 
-    // Refresh profile data
-    fetchProfile();
   };
 
   const handleImageDelete = async () => {
@@ -116,8 +114,6 @@ export const ProfilePage = memo(() => {
       throw new Error('Failed to delete image');
     }
 
-    // Refresh profile data
-    fetchProfile();
   };
 
   if (loading) {
