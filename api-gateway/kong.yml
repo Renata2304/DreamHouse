@@ -42,5 +42,13 @@ services:
     routes:
       - name: keycloak-route
         paths:
-          - /keycloak
-        strip_path: true
+          - /realms
+          - /admin
+          - /resources
+          - /js
+          - /css
+          - /welcome-content
+          - /robots.txt
+          - /health
+          - /metrics
+        strip_path: false
