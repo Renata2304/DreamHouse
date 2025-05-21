@@ -32,7 +32,7 @@ export const HomePage = memo(() => {
 
     try {
       const url = `/listings/listing/getByLocation?location=${encodeURIComponent(location)}`;
-      const response = await authenticatedFetch(url);
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
