@@ -10,9 +10,22 @@ import {
   Button,
   Grid,
   CircularProgress,
+  Container,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ImageUpload from '../components/ImageUpload';
+
+interface Listing {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    location: string;
+    surface: number;
+    rooms: number;
+    imagePath?: string;
+}
 
 export const AddListingPage = memo(() => {
   const { formatMessage } = useIntl();
@@ -26,6 +39,9 @@ export const AddListingPage = memo(() => {
     surface: "",
     rooms: "",
   });
+  const [listingId, setListingId] = useState('');
+  const [listing, setListing] = useState<Listing | null>(null);
+  const token = localStorage.getItem('token');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -44,6 +60,7 @@ export const AddListingPage = memo(() => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           ...formData,
@@ -59,6 +76,8 @@ export const AddListingPage = memo(() => {
 
       const data = await response.json();
       toast.success('Listing added successfully!');
+      setListingId(data.id);
+      setListing(data);
       navigate('/listings');
     } catch (error) {
       console.error('Error adding listing:', error);
@@ -68,15 +87,75 @@ export const AddListingPage = memo(() => {
     }
   };
 
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}/image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
+    }
+
+    // Refresh listing data
+    fetchListing();
+  };
+
+  const handleImageDelete = async () => {
+    const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}/image`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete image');
+    }
+
+    // Refresh listing data
+    fetchListing();
+  };
+
+  const fetchListing = async () => {
+    try {
+      const response = await fetch(`http://dreamhouse-api-gateway:8000/listings/listing/${listingId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch listing');
+      const data = await response.json();
+      setListing(data);
+    } catch (error) {
+      console.error('Error fetching listing:', error);
+    }
+  };
+
   return (
     <Fragment>
       <Seo title="DreamHouse | Add Listing" />
       <WebsiteLayout>
-        <Box className="px-[50px] py-8">
-          <Paper elevation={3} className="p-6">
+        <Container maxWidth="md" sx={{ mt: 4 }}>
+          <Paper sx={{ p: 3 }}>
             <Typography variant="h4" gutterBottom>
               Add New Listing
             </Typography>
+
+            <ImageUpload
+              type="listing"
+              onUpload={handleImageUpload}
+              onDelete={handleImageDelete}
+              currentImageUrl={listing?.imagePath ? `http://dreamhouse-api-gateway:8000/files/listings/${listing.imagePath}` : undefined}
+              token={token || ''}
+            />
+
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
                 <Grid item xs={12}>
@@ -164,7 +243,7 @@ export const AddListingPage = memo(() => {
               </Grid>
             </form>
           </Paper>
-        </Box>
+        </Container>
       </WebsiteLayout>
     </Fragment>
   );

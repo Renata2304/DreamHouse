@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, memo } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 /**
  * This is the navigation menu that will stay at the top of the page.
  */
-export const Navbar = () => {
+export const Navbar = memo(() => {
   const { formatMessage } = useIntl();
   const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
   const navigate = useNavigate();
@@ -140,21 +140,7 @@ export const Navbar = () => {
                       <PersonIcon />
                     </Avatar>
                   </IconButton>
-                  <Button 
-                    color="inherit" 
-                    onClick={() => {
-                      dispatch(resetProfile());
-                      navigate(AppRoute.Index);
-                    }}
-                    sx={{ 
-                      color: 'white',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                      }
-                    }}
-                  >
-                    {formatMessage({ id: "globals.logout" })}
-                  </Button>
+                  <AuthButtons />
                 </>
               ) : (
                 <Box className="flex items-center space-x-2">
@@ -170,4 +156,4 @@ export const Navbar = () => {
       <div className="min-h-20"/>
     </div>
   </>
-}
+})

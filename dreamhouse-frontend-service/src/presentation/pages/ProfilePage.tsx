@@ -15,11 +15,13 @@ import {
   Tabs,
   Tab,
   CircularProgress,
+  Container,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HomeIcon from '@mui/icons-material/Home';
+import ImageUpload from '../components/ImageUpload';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -55,18 +57,19 @@ export const ProfilePage = memo(() => {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tabValue, setTabValue] = useState(0);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
-        const response = await fetch('http://localhost:8081/profiles/me');
+        const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
         setProfile(data);
-        
-        // Fetch favorites and listings here when the endpoints are available
-        // setFavorites(favoritesData);
-        // setListings(listingsData);
       } catch (error) {
         console.error('Error fetching profile:', error);
       } finally {
@@ -75,10 +78,46 @@ export const ProfilePage = memo(() => {
     };
 
     fetchProfileData();
-  }, []);
+  }, [token]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
+  };
+
+  const handleImageUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/image', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
+    }
+
+    // Refresh profile data
+    fetchProfile();
+  };
+
+  const handleImageDelete = async () => {
+    const response = await fetch('http://dreamhouse-api-gateway:8000/users/profiles/image', {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete image');
+    }
+
+    // Refresh profile data
+    fetchProfile();
   };
 
   if (loading) {
@@ -95,8 +134,20 @@ export const ProfilePage = memo(() => {
     <Fragment>
       <Seo title="DreamHouse | Profile" />
       <WebsiteLayout>
-        <Box className="px-[50px] py-8">
-          <Paper elevation={3} className="p-6">
+        <Container maxWidth="md" sx={{ mt: 4 }}>
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h4" gutterBottom>
+              Profile
+            </Typography>
+
+            <ImageUpload
+              type="profile"
+              onUpload={handleImageUpload}
+              onDelete={handleImageDelete}
+              currentImageUrl={profile?.imagePath ? `http://dreamhouse-api-gateway:8000/files/profiles/${profile.imagePath}` : undefined}
+              token={token || ''}
+            />
+
             <Grid container spacing={4}>
               <Grid item xs={12} md={4} className="flex flex-col items-center">
                 <Avatar
@@ -196,7 +247,7 @@ export const ProfilePage = memo(() => {
               </Grid>
             </Grid>
           </Paper>
-        </Box>
+        </Container>
       </WebsiteLayout>
     </Fragment>
   );
