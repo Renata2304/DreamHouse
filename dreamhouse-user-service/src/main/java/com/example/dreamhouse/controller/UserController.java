@@ -16,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/users")
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;

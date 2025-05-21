@@ -13,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/images")
+@CrossOrigin(origins = "*")
 public class ImageController {
 
     private final ImageService imageService;

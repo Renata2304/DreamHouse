@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/favorites")
+@CrossOrigin(origins = "*")
 public class FavoritesController {
 
     private final FavoritesService favoritesService;

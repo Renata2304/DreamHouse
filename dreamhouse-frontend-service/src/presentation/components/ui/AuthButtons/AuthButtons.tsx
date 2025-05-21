@@ -4,6 +4,14 @@ import { useAppSelector } from '@application/store';
 import { useAppDispatch } from '@application/store';
 import { resetProfile } from '@application/state-slices';
 import { useAppRouter } from '@infrastructure/hooks/useAppRouter';
+import Keycloak from 'keycloak-js';
+
+// Initialize Keycloak
+const keycloak = new (Keycloak as any)({
+    url: "http://localhost:1100",
+    realm: "dreamhouse",
+    clientId: "backend-rest-api",
+});
 
 // Function to generate random string for PKCE
 const generateRandomString = (length: number) => {
@@ -82,8 +90,14 @@ export const AuthButtons = () => {
     };
 
     const handleLogout = () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        
         dispatch(resetProfile());
-        redirectToHome();
+        
+        keycloak.logout({ 
+            redirectUri: window.location.origin 
+        });
     };
 
     if (loggedIn) {

@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/requests")
+@CrossOrigin(origins = "*")
 public class PurchaseRequestController {
 
     private final PurchaseRequestService requestService;
