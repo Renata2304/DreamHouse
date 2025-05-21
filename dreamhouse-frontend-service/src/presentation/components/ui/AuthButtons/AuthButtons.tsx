@@ -59,9 +59,7 @@ export const AuthButtons = () => {
             + `&response_type=code`
             + `&scope=openid`
             + `&code_challenge=${codeChallenge}`
-            + `&code_challenge_method=S256`
-            + `&kc_idp_hint=dreamhouse`;
-
+            + `&code_challenge_method=S256`;
         window.location.href = loginUrl;
     };
 
@@ -84,20 +82,22 @@ export const AuthButtons = () => {
             + `&response_type=code`
             + `&scope=openid profile email`
             + `&code_challenge=${codeChallenge}`
-            + `&code_challenge_method=S256`;
+            + `&code_challenge_method=S256`
+            + `&kc_action=register`;
 
         window.location.href = registerUrl;
     };
 
     const handleLogout = () => {
-        keycloak.logout({ 
-            redirectUri: window.location.origin 
-        });
+       
         localStorage.clear();
         sessionStorage.clear();
         
         dispatch(resetProfile());
         
+        keycloak.logout({ 
+            redirectUri: window.location.origin 
+        });
     };
 
     if (loggedIn) {

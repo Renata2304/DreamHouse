@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/listing")
+@CrossOrigin(origins = "http://localhost:3001")
 public class ListingController {
 
     private final ListingService listingService;

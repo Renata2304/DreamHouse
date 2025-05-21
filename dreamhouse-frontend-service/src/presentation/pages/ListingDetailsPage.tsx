@@ -21,7 +21,7 @@ export const ListingDetailsPage = () => {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchListingDetails = async () => {
@@ -32,16 +32,23 @@ export const ListingDetailsPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/listing/${id}`, {
+        const response = await fetch(`http://localhost:8000/listing/getListingDetails/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include"
         });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || "Failed to fetch listing details");
+        }
+
+        const data: Listing = await response.json();
+        setListing(data);
       } catch (error) {
-        console.error('Error fetching listing details:', error);
+        console.error("Error fetching listing details:", error);
         setError("Failed to fetch listing details");
       } finally {
         setLoading(false);
@@ -49,7 +56,7 @@ export const ListingDetailsPage = () => {
     };
 
     fetchListingDetails();
-  }, [id]);
+  }, [id, token]);
 
   if (loading) {
     return (
@@ -68,11 +75,7 @@ export const ListingDetailsPage = () => {
           <Typography variant="h5" color="error">
             {error || "Listing not found"}
           </Typography>
-          <Button
-            variant="contained"
-            onClick={() => navigate('/listings')}
-            className="mt-4"
-          >
+          <Button variant="contained" onClick={() => navigate("/listings")} className="mt-4">
             Back to Listings
           </Button>
         </Box>
@@ -90,7 +93,7 @@ export const ListingDetailsPage = () => {
               {listing.title}
             </Typography>
             <Divider className="my-4" />
-            
+
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle1" color="text.secondary">
@@ -100,7 +103,7 @@ export const ListingDetailsPage = () => {
                   {listing.location}
                 </Typography>
               </Grid>
-              
+
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle1" color="text.secondary">
                   Price
@@ -139,10 +142,7 @@ export const ListingDetailsPage = () => {
 
               <Grid item xs={12}>
                 <Box className="flex justify-end space-x-4">
-                  <Button
-                    variant="outlined"
-                    onClick={() => navigate('/listings')}
-                  >
+                  <Button variant="outlined" onClick={() => navigate("/listings")}>
                     Back to Listings
                   </Button>
                 </Box>
@@ -153,4 +153,4 @@ export const ListingDetailsPage = () => {
       </WebsiteLayout>
     </>
   );
-}; 
+};
