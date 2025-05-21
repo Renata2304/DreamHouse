@@ -14,7 +14,7 @@ export const KeycloakContextProvider = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     const keycloak: KeycloakInstance = new (Keycloak as any)({
-      url: "http://dreamhouse-api-gateway:8000",
+      url: "http://localhost:1100",
       realm: "dreamhouse",
       clientId: "backend-rest-api",
     });
