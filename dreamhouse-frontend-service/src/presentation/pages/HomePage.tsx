@@ -1,86 +1,28 @@
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
-import { Fragment, memo, useState } from "react";
+import { Fragment, memo } from "react";
 import { useIntl } from "react-intl";
 import { Seo } from "@presentation/components/ui/Seo";
-import {
-  TextField,
-  Button,
-  Box,
-  CircularProgress,
-} from "@mui/material";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "@application/store";
-import { authenticatedFetch, authenticatedFetchJson } from "@infrastructure/utils/api";
+import { Box, Typography } from "@mui/material";
 
 export const HomePage = memo(() => {
   const { formatMessage } = useIntl();
-  const navigate = useNavigate();
-  const { token } = useAppSelector(x => x.profileReducer);
-
-  const [location, setLocation] = useState("");
-  const [jsonResponse, setJsonResponse] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchListings = async () => {
-    if (!location.trim()) return;
-
-    setLoading(true);
-    setError(null);
-    setJsonResponse(null);
-
-    try {
-      const url = `/listings/listing/getByLocation?location=${encodeURIComponent(location)}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setJsonResponse(data);
-
-      navigate("/listings", { state: { listings: data } });
-
-    } catch (err: any) {
-      console.error("Eroare fetch:", err);
-      setError("Nu s-a putut prelua lista de proprietăți. Verifică conexiunea și încearcă din nou.");
-      toast.error(formatMessage({ id: "notifications.errors.networkError" }));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <Fragment>
-      <Seo title="MobyLab Web App | Home" />
+      <Seo title="DreamHouse | Home" />
       <WebsiteLayout>
-        <Box className="px-[50px] space-y-4">
-          <TextField
-            fullWidth
-            variant="outlined"
-            label="Caută după locație"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+        <Box className="px-[50px] py-12 flex flex-col items-center justify-center space-y-6">
+          <img 
+            src="/logo.png" 
+            alt="DreamHouse Logo" 
+            className="w-48 h-48 object-contain"
           />
-          <Button variant="contained" onClick={fetchListings}>
-            Caută
-          </Button>
-
-          {loading && (
-            <Box className="flex justify-center">
-              <CircularProgress />
-            </Box>
-          )}
-
-          {error && <Box color="error.main">{error}</Box>}
-
-          {!loading && jsonResponse && (
-            <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[400px]">
-              {JSON.stringify(jsonResponse, null, 2)}
-            </pre>
-          )}
+          <Typography variant="h3" component="h1" className="text-center">
+            Hello, Welcome to DreamHouse
+          </Typography>
+          <Typography variant="h6" color="text.secondary" className="text-center">
+            Your perfect home is just a search away
+          </Typography>
         </Box>
       </WebsiteLayout>
     </Fragment>

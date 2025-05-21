@@ -9,6 +9,8 @@ import { Route, Routes, RouterProvider } from "react-router-dom";
 import { AppRoute } from "routes";
 import { createBrowserRouter } from "react-router-dom";
 import { ListingsPage } from "@presentation/pages/ListingPage";
+import { ProfilePage } from "@presentation/pages/ProfilePage";
+import { AddListingPage } from "@presentation/pages/AddListingPage";
 
 export function App() {
   const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
@@ -21,6 +23,14 @@ export function App() {
     {
       path: "/listings",
       element: <ListingsPage />
+    },
+    {
+      path: "/profile",
+      element: <ProfilePage />
+    },
+    {
+      path: "/add-listing",
+      element: <AddListingPage />
     },
     {
       path: AppRoute.Users,
