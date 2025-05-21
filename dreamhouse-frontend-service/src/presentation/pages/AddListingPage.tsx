@@ -40,7 +40,7 @@ export const AddListingPage = memo(() => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8080/listing/addListing', {
+      const response = await fetch('http://dreamhouse-api-gateway:8000/listings/listing/addListing', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

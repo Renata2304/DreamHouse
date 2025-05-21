@@ -9,6 +9,7 @@ import { AddListingPage } from "@presentation/pages/AddListingPage";
 import { Outlet } from "react-router-dom";
 import { useOwnUserHasRole } from "@infrastructure/hooks/useOwnUser";
 import { UserRoleEnum } from "@infrastructure/apis/client";
+import { ListingDetailsPage } from "presentation/pages/ListingDetailsPage";
 
 export enum AppRoute {
     Index = "/",
@@ -38,6 +39,10 @@ export const router = createBrowserRouter([
             {
                 path: AppRoute.Listings,
                 element: <ListingsPage />
+            },
+            {
+                path: `${AppRoute.Listings}/:id`,
+                element: <ListingDetailsPage />
             },
             {
                 path: AppRoute.Profile,

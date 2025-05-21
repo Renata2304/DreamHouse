@@ -31,7 +31,7 @@ export const Navbar = () => {
     if (!searchTerm.trim()) return;
     
     try {
-      const url = `/listings/listing/getByLocation?location=${encodeURIComponent(searchTerm)}`;
+      const url = `http://dreamhouse-api-gateway:8000/listings/listing/getByLocation?location=${encodeURIComponent(searchTerm)}`;
       const response = await fetch(url);
 
       if (!response.ok) {
