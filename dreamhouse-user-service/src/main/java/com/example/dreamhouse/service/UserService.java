@@ -1,6 +1,7 @@
 package com.example.dreamhouse.service;
 
 import com.example.dreamhouse.entity.User;
+import com.example.dreamhouse.entity.UserProfile;
 import com.example.dreamhouse.service.dto.UserDto;
 import com.example.dreamhouse.repository.UserRepository;
 import org.springframework.stereotype.Service;
