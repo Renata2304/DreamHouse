@@ -87,4 +87,36 @@ public class ListingService {
         listingRepository.deleteById(listingId);
     }
 
+    public Listing getListingById(UUID id) {
+        return listingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Listing not found"));
+    }
+
+    public Listing editListing(UUID listingId, ListingDto updatedListingDto) {
+        var authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getToken().getClaimAsString("sub");
+
+        Optional<Listing> listingOpt = listingRepository.findById(listingId);
+        if (listingOpt.isEmpty()) {
+            throw new EntityNotFoundException("Listing with ID " + listingId + " not found.");
+        }
+
+        var listing = listingOpt.get();
+
+        if (!listing.getOwner().getId().toString().equals(currentUserId)) {
+            throw new UnauthorizedException("You are not allowed to edit this listing.");
+        }
+
+        // Update the listing fields with values from updatedListingDto
+        listing.setTitle(updatedListingDto.getTitle());
+        listing.setLocation(updatedListingDto.getLocation());
+        listing.setPrice(updatedListingDto.getPrice());
+        listing.setSurface(updatedListingDto.getSurface());
+        listing.setRooms(updatedListingDto.getRooms());
+        listing.setDescription(updatedListingDto.getDescription());
+
+        return listingRepository.save(listing);
+    }
+
+
 }

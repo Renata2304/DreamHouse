@@ -46,4 +46,24 @@ public class ListingController {
         listingService.deleteListing(id);
         return ResponseEntity.noContent().build();
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
+    @GetMapping("/getListingDetails/{id}")
+    public ResponseEntity<Listing> getListing(@PathVariable UUID id) {
+        Listing listing = listingService.getListingById(id);
+        return ResponseEntity.status(200).body(listing);
+    }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
+    @PutMapping("/editListing/{id}")
+    public ResponseEntity<Listing> editListing(
+            @PathVariable UUID id,
+            @RequestBody ListingDto updatedListingDto) {
+        Listing updatedListing = listingService.editListing(id, updatedListingDto);
+        return ResponseEntity.ok(updatedListing);
+    }
+
+
 }
