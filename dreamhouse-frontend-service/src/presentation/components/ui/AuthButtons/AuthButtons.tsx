@@ -1,9 +1,9 @@
-import { memo } from 'react';
+import { Button, Stack } from '@mui/material';
 import { useIntl } from 'react-intl';
-import { Button } from '@mui/material';
-import { AppRoute } from 'routes/index';
-import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '@application/store';
+import { useAppDispatch } from '@application/store';
+import { resetProfile } from '@application/state-slices';
+import { useAppRouter } from '@infrastructure/hooks/useAppRouter';
 
 // Function to generate random string for PKCE
 const generateRandomString = (length: number) => {
@@ -26,70 +26,81 @@ const generateCodeChallenge = async (codeVerifier: string) => {
         .replace(/\//g, '_');
 };
 
-const logout = async () => {
-    const token = localStorage.getItem('token');
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    try {
-        // End the Keycloak session
-        await fetch('http://localhost:1100/realms/dreamhouse/protocol/openid-connect/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                client_id: 'dreamhouse-client',
-                refresh_token: refreshToken || '',
-            }),
-        });
-
-        // Clear all storage
-        localStorage.clear();
-        sessionStorage.clear();
-
-        // Redirect to login page
-        window.location.href = '/login';
-    } catch (error) {
-        console.error('Error during logout:', error);
-        // Even if the Keycloak logout fails, we still want to clear all storage
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = '/login';
-    }
-};
-
-export const AuthButtons = memo(() => {
+export const AuthButtons = () => {
     const { formatMessage } = useIntl();
-    const navigate = useNavigate();
     const { loggedIn } = useAppSelector(x => x.profileReducer);
+    const dispatch = useAppDispatch();
+    const { redirectToHome } = useAppRouter();
 
-    const handleLogout = async () => {
-        await logout();
+    const redirectToKeycloakLogin = async () => {
+        const keycloakUrl = 'http://localhost:1100';
+        const realm = 'dreamhouse';
+        const clientId = 'backend-rest-api';
+        const redirectUri = encodeURIComponent('http://localhost:3001/');
+
+        // Generate PKCE values
+        const codeVerifier = generateRandomString(128);
+        const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+        // Store code verifier in session storage to use it later
+        sessionStorage.setItem('code_verifier', codeVerifier);
+
+        const loginUrl = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/auth`
+            + `?client_id=${clientId}`
+            + `&redirect_uri=${redirectUri}`
+            + `&response_type=code`
+            + `&scope=openid`
+            + `&code_challenge=${codeChallenge}`
+            + `&code_challenge_method=S256`
+            + `&kc_idp_hint=dreamhouse`;
+
+        window.location.href = loginUrl;
+    };
+
+    const redirectToKeycloakRegister = async () => {
+        const keycloakUrl = 'http://localhost:1100';
+        const realm = 'dreamhouse';
+        const clientId = 'backend-rest-api';
+        const redirectUri = encodeURIComponent('http://localhost:3001/');
+
+        // Generate PKCE values
+        const codeVerifier = generateRandomString(128);
+        const codeChallenge = await generateCodeChallenge(codeVerifier);
+
+        // Store code verifier in session storage to use it later
+        sessionStorage.setItem('code_verifier', codeVerifier);
+
+        const registerUrl = `${keycloakUrl}/realms/${realm}/protocol/openid-connect/registrations`
+            + `?client_id=${clientId}`
+            + `&redirect_uri=${redirectUri}`
+            + `&response_type=code`
+            + `&scope=openid profile email`
+            + `&code_challenge=${codeChallenge}`
+            + `&code_challenge_method=S256`;
+
+        window.location.href = registerUrl;
+    };
+
+    const handleLogout = () => {
+        dispatch(resetProfile());
+        redirectToHome();
     };
 
     if (loggedIn) {
         return (
-            <Button
-                color="inherit"
-                onClick={handleLogout}
-                sx={{
-                    color: 'white',
-                    '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
-                    }
-                }}
-            >
+            <Button color="inherit" onClick={handleLogout}>
                 {formatMessage({ id: "globals.logout" })}
             </Button>
         );
     }
 
     return (
-        <>
+        <Stack direction="row" spacing={2}>
             <Button
                 color="inherit"
-                onClick={() => navigate(AppRoute.Login)}
+                onClick={redirectToKeycloakLogin}
                 sx={{
+                    minWidth: '100px',
                     color: 'white',
                     '&:hover': {
                         backgroundColor: 'rgba(255, 255, 255, 0.1)'
@@ -100,8 +111,9 @@ export const AuthButtons = memo(() => {
             </Button>
             <Button
                 color="inherit"
-                onClick={() => navigate(AppRoute.Register)}
+                onClick={redirectToKeycloakRegister}
                 sx={{
+                    minWidth: '100px',
                     color: 'white',
                     '&:hover': {
                         backgroundColor: 'rgba(255, 255, 255, 0.1)'
@@ -110,6 +122,6 @@ export const AuthButtons = memo(() => {
             >
                 {formatMessage({ id: "globals.register" })}
             </Button>
-        </>
+        </Stack>
     );
-});
+};
