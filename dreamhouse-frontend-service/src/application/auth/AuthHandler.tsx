@@ -28,7 +28,7 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
                             client_id: 'backend-rest-api',
                             code_verifier: codeVerifier,
                             code: code,
-                            redirect_uri: 'http://localhost:3001/'
+                            redirect_uri: window.location.origin + window.location.pathname
                         })
                     });
 

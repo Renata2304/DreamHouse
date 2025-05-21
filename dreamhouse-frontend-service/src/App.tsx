@@ -5,12 +5,13 @@ import { ToastNotifier } from "@presentation/components/ui/ToastNotifier";
 import { HomePage } from "@presentation/pages/HomePage";
 import { UserFilesPage } from "@presentation/pages/UserFilesPage";
 import { UsersPage } from "@presentation/pages/UsersPage";
-import { Route, Routes, RouterProvider } from "react-router-dom";
+import { Route, Routes, RouterProvider, Outlet } from "react-router-dom";
 import { AppRoute } from "routes";
 import { createBrowserRouter } from "react-router-dom";
 import { ListingsPage } from "@presentation/pages/ListingPage";
 import { ProfilePage } from "@presentation/pages/ProfilePage";
 import { AddListingPage } from "@presentation/pages/AddListingPage";
+import { AuthHandler } from "@application/auth/AuthHandler";
 
 export function App() {
   const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
@@ -18,32 +19,40 @@ export function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <HomePage />
-    },
-    {
-      path: "/listings",
-      element: <ListingsPage />
-    },
-    {
-      path: "/profile",
-      element: <ProfilePage />
-    },
-    {
-      path: "/add-listing",
-      element: <AddListingPage />
-    },
-    {
-      path: AppRoute.Users,
-      element: isAdmin ? <UsersPage /> : null
-    },
-    {
-      path: AppRoute.UserFiles,
-      element: <UserFilesPage />
+      element: <AuthHandler><Outlet /></AuthHandler>,
+      children: [
+        {
+          path: "/",
+          element: <HomePage />
+        },
+        {
+          path: "/listings",
+          element: <ListingsPage />
+        },
+        {
+          path: "/profile",
+          element: <ProfilePage />
+        },
+        {
+          path: "/add-listing",
+          element: <AddListingPage />
+        },
+        {
+          path: AppRoute.Users,
+          element: isAdmin ? <UsersPage /> : null
+        },
+        {
+          path: AppRoute.UserFiles,
+          element: <UserFilesPage />
+        }
+      ]
     }
   ]);
 
-  return <AppIntlProvider> {/* AppIntlProvider provides the functions to search the text after the provides string ids. */}
+  return (
+    <AppIntlProvider>
       <ToastNotifier />
       <RouterProvider router={router} />
     </AppIntlProvider>
+  );
 }

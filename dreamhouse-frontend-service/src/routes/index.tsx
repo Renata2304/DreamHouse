@@ -4,6 +4,7 @@ import { HomePage } from "@presentation/pages/HomePage";
 import { ListingsPage } from "@presentation/pages/ListingPage";
 import { UsersPage } from "@presentation/pages/UsersPage";
 import { UserFilesPage } from "@presentation/pages/UserFilesPage";
+import { Outlet } from "react-router-dom";
 
 export enum AppRoute {
     Index = "/",
@@ -15,7 +16,7 @@ export enum AppRoute {
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <AuthHandler />,
+        element: <AuthHandler><Outlet /></AuthHandler>,
         children: [
             {
                 path: AppRoute.Index,
