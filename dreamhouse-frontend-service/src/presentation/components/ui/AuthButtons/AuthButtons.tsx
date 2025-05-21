@@ -96,10 +96,10 @@ export const AuthButtons = () => {
 
     return (
         <Stack direction="row" spacing={2}>
-            <Button 
-                color="inherit" 
+            <Button
+                color="inherit"
                 onClick={redirectToKeycloakLogin}
-                sx={{ 
+                sx={{
                     minWidth: '100px',
                     color: 'white',
                     '&:hover': {
@@ -109,10 +109,10 @@ export const AuthButtons = () => {
             >
                 {formatMessage({ id: "globals.login" })}
             </Button>
-            <Button 
-                color="inherit" 
+            <Button
+                color="inherit"
                 onClick={redirectToKeycloakRegister}
-                sx={{ 
+                sx={{
                     minWidth: '100px',
                     color: 'white',
                     '&:hover': {
@@ -124,4 +124,4 @@ export const AuthButtons = () => {
             </Button>
         </Stack>
     );
-}; 
+};
