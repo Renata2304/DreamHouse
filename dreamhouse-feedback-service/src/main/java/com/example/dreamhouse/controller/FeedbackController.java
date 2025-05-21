@@ -15,6 +15,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/feedback")
+@CrossOrigin(origins = "*")
 @SecurityRequirement(name = "bearerAuth")
 public class FeedbackController {
     private final FeedbackService feedbackService;
