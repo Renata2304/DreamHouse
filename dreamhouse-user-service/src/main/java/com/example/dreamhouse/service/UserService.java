@@ -42,6 +42,14 @@ public class UserService {
             user.setId(uuid);
             user.setUsername(username);
             user.setEmail(email);
+            
+            // Create default user profile
+            UserProfile profile = new UserProfile();
+            profile.setUser(user);
+            profile.setBio("Welcome to DreamHouse!");
+            profile.setAvatarUrl("https://www.gravatar.com/avatar/" + email.toLowerCase().trim() + "?d=identicon");
+            user.setUserProfile(profile);
+            
             return userRepository.save(user);
         });
     }

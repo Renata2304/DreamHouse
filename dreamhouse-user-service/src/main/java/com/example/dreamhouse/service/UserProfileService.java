@@ -27,7 +27,13 @@ public class UserProfileService {
 
         UserProfile profile = user.getUserProfile();
         if (profile == null) {
-            throw new IllegalStateException("Profile not found for user");
+            // Create default profile if it doesn't exist
+            profile = new UserProfile();
+            profile.setUser(user);
+            profile.setBio("Welcome to DreamHouse!");
+            profile.setAvatarUrl("https://www.gravatar.com/avatar/" + user.getEmail().toLowerCase().trim() + "?d=identicon");
+            user.setUserProfile(profile);
+            userRepository.save(user);
         }
 
         return new UserProfileDto(profile.getBio(), profile.getAvatarUrl());
