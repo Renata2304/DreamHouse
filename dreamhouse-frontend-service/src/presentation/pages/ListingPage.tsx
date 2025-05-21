@@ -17,11 +17,18 @@ import {
   TablePagination,
   IconButton,
   InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
 import SearchIcon from "@mui/icons-material/Search";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useIntl } from "react-intl";
+import { ListingControllerApi } from "../../api/listings/apis/ListingControllerApi";
+import { Configuration } from "../../api/listings/runtime";
 
 export const ListingsPage = () => {
   const location = useLocation();
@@ -31,6 +38,10 @@ export const ListingsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedListingId, setSelectedListingId] = useState<string | null>(null);
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -39,6 +50,36 @@ export const ListingsPage = () => {
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleDeleteClick = (listingId: string) => {
+    setSelectedListingId(listingId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedListingId || !token) return;
+
+    try {
+      const config = new Configuration({
+        accessToken: () => Promise.resolve(token)
+      });
+      const api = new ListingControllerApi(config);
+      await api.deleteListing({ id: selectedListingId });
+      
+      // Remove the deleted listing from the state
+      setListings(listings.filter(listing => listing.id !== selectedListingId));
+      setDeleteDialogOpen(false);
+      setSelectedListingId(null);
+    } catch (error) {
+      console.error('Error deleting listing:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setSelectedListingId(null);
   };
 
   const filteredListings = listings.filter((listing) =>
@@ -100,13 +141,24 @@ export const ListingsPage = () => {
                       <TableCell>{listing.price ?? "Nespecificat"}</TableCell>
                       <TableCell>{listing.propertyType || "Nespecificat"}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="contained"
-                          size="small"
-                          onClick={() => navigate(`/listings/${listing.id}`)}
-                        >
-                          Detalii
-                        </Button>
+                        <Box className="flex gap-2">
+                          <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => navigate(`/listings/${listing.id}`)}
+                          >
+                            Detalii
+                          </Button>
+                          {userId && listing.userId === userId && (
+                            <IconButton
+                              color="error"
+                              size="small"
+                              onClick={() => handleDeleteClick(listing.id)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          )}
+                        </Box>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -130,6 +182,24 @@ export const ListingsPage = () => {
               Înapoi
             </Button>
           </Box>
+
+          <Dialog
+            open={deleteDialogOpen}
+            onClose={handleDeleteCancel}
+          >
+            <DialogTitle>Confirmare ștergere</DialogTitle>
+            <DialogContent>
+              <Typography>
+                Sunteți sigur că doriți să ștergeți această proprietate?
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDeleteCancel}>Anulează</Button>
+              <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+                Șterge
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
       </WebsiteLayout>
     </>

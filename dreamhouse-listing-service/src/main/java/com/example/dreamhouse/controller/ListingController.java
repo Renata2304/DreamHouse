@@ -34,6 +34,7 @@ public class ListingController {
         return ResponseEntity.status(200).body(listingDtoList);
     }
 
+    @CrossOrigin(origins = "http://localhost:3001")
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
     @PostMapping("/addListing")
@@ -45,6 +46,7 @@ public class ListingController {
         return ResponseEntity.status(200).body(listing);
     }
 
+    @CrossOrigin(origins = "http://localhost:3001")
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('client_user')")
     @DeleteMapping("/deleteListing/{id}")

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/images")
-@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearerAuth")
 public class ImageController {
 
     private final ImageService imageService;

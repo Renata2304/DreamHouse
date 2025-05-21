@@ -14,7 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/reviews")
 @SecurityRequirement(name = "bearerAuth")
-@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "bearerAuth")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -23,7 +23,6 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    // Adaugă o recenzie
     @PreAuthorize("hasAnyRole('client_admin', 'client_user')")
     @PostMapping("/add")
     public ResponseEntity<Review> addReview(@RequestBody ReviewDto reviewDto) {
@@ -31,7 +30,6 @@ public class ReviewController {
         return ResponseEntity.status(201).body(review);
     }
 
-    // Obține recenziile pentru un anumit listing
     @PreAuthorize("hasAnyRole('client_admin', 'client_user')")
     @GetMapping("/byListing/{listingId}")
     public ResponseEntity<List<Review>> getReviewsByListing(@PathVariable UUID listingId) {
@@ -39,7 +37,6 @@ public class ReviewController {
         return ResponseEntity.status(200).body(reviews);
     }
 
-    // Obține recenziile pentru un anumit user
     @PreAuthorize("hasAnyRole('client_admin', 'client_user')")
     @GetMapping("/byUser/{userId}")
     public ResponseEntity<List<Review>> getReviewsByUser(@PathVariable UUID userId) {
