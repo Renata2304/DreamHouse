@@ -45,7 +45,7 @@ export const Navbar = () => {
 
   return <>
     <div className="w-full top-0 z-50 fixed">
-      <AppBar color="primary" position="static">
+      <AppBar position="static" sx={{ backgroundColor: '#8D0909' }}>
         <Toolbar>
           <div className="grid grid-cols-12 gap-y-5 gap-x-10 justify-center items-center w-full">
             <div className="col-span-1">
@@ -58,14 +58,14 @@ export const Navbar = () => {
             {isAdmin && <>
               <div className="col-span-1">
                 <Button color="inherit">
-                  <Link style={{ color: 'white' }} to={AppRoute.Users}>
+                  <Link style={{ color: '#8D0909' }} to={AppRoute.Users}>
                     {formatMessage({ id: "globals.users" })}
                   </Link>
                 </Button>
               </div>
               <div className="col-span-1">
                 <Button color="inherit">
-                  <Link style={{ color: 'white' }} to={AppRoute.UserFiles}>
+                  <Link style={{ color: '#8D0909' }} to={AppRoute.UserFiles}>
                     {formatMessage({ id: "globals.files" })}
                   </Link>
                 </Button>
@@ -76,7 +76,7 @@ export const Navbar = () => {
                 fullWidth
                 size="small"
                 variant="outlined"
-                placeholder="Search by location..."
+                placeholder={formatMessage({ id: "search.placeholder" })}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
@@ -103,40 +103,21 @@ export const Navbar = () => {
                 }}
               />
             </div>
-            <div className="col-span-4 flex justify-end items-center space-x-4">
-              <Button
-                variant="contained"
-                color="secondary"
-                startIcon={<AddIcon />}
-                onClick={() => navigate('/add-listing')}
-                sx={{
-                  backgroundColor: 'white',
-                  color: 'primary.main',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                  },
-                  minWidth: '120px'
-                }}
-              >
-                Add Listing
-              </Button>
-              <IconButton 
-                onClick={() => navigate('/profile')}
-                sx={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  }
-                }}
-              >
-                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-                  <PersonIcon />
-                </Avatar>
-              </IconButton>
+            <div className="col-span-2">
               <NavbarLanguageSelector />
-              <Box className="flex flex-col space-y-1">
+            </div>
+            <div className="col-span-2">
+              {loggedIn ? (
+                <Link to={AppRoute.Profile}>
+                  <IconButton>
+                    <Avatar sx={{ bgcolor: '#8D0909' }}>
+                      <PersonIcon />
+                    </Avatar>
+                  </IconButton>
+                </Link>
+              ) : (
                 <AuthButtons />
-              </Box>
+              )}
             </div>
           </div>
         </Toolbar>

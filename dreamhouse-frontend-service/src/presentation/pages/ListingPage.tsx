@@ -21,10 +21,12 @@ import {
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
 import SearchIcon from "@mui/icons-material/Search";
+import { useIntl } from "react-intl";
 
 export const ListingsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
   const [listings, setListings] = useState<any[]>(location.state?.listings || []);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
@@ -52,18 +54,18 @@ export const ListingsPage = () => {
 
   return (
     <>
-      <Seo title="Lista Proprietăților" />
+      <Seo title={formatMessage({ id: "search.listings.title" })} />
       <WebsiteLayout>
         <Box className="px-[50px] py-6">
           <Typography variant="h4" gutterBottom>
-            Lista Proprietăților
+            {formatMessage({ id: "search.listings.title" })}
           </Typography>
 
           <Box className="mb-4">
             <TextField
               fullWidth
               variant="outlined"
-              placeholder="Caută după titlu, locație, preț..."
+              placeholder={formatMessage({ id: "search.listings.placeholder" })}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               InputProps={{

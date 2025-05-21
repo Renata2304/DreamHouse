@@ -22,5 +22,10 @@
     "globals.file": "Fisier",
     "globals.placeholders.textInput": "Va rugam sa introduceti {fieldName}",
     "globals.placeholders.selectInput": "Va rugam sa selectati {fieldName}",
-    "globals.validations.requiredField": "{fieldName} este camp obligatoriu!"
+    "globals.validations.requiredField": "{fieldName} este camp obligatoriu!",
+    "home.welcome": "Bun venit la DreamHouse",
+    "home.subtitle": "Casa ta perfectă este la doar un click distanță",
+    "search.placeholder": "Caută după locație...",
+    "search.listings.title": "Lista Proprietăților",
+    "search.listings.placeholder": "Caută după titlu, locație, preț..."
 }

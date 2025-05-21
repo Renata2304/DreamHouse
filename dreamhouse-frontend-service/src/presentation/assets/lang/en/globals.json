@@ -22,5 +22,10 @@
     "globals.file": "File",
     "globals.placeholders.textInput": "Please enter {fieldName}",
     "globals.placeholders.selectInput": "Please select the {fieldName}",
-    "globals.validations.requiredField": "{fieldName} is a required field!"
+    "globals.validations.requiredField": "{fieldName} is a required field!",
+    "home.welcome": "Hello, Welcome to DreamHouse",
+    "home.subtitle": "Your perfect home is just a search away",
+    "search.placeholder": "Search by location...",
+    "search.listings.title": "Listings",
+    "search.listings.placeholder": "Search by title, location, price..."
 }
