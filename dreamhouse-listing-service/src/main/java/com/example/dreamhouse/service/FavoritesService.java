@@ -3,6 +3,7 @@ package com.example.dreamhouse.service;
 import com.example.dreamhouse.entity.Favorites;
 import com.example.dreamhouse.entity.Listing;
 import com.example.dreamhouse.entity.User;
+import com.example.dreamhouse.exception.UnauthorizedException;
 import com.example.dreamhouse.repository.FavoritesRepository;
 import com.example.dreamhouse.repository.ListingRepository;
 import com.example.dreamhouse.repository.UserRepository;
@@ -53,9 +54,14 @@ public class FavoritesService {
         return favoritesRepository.existsByUserIdAndListingId(userId, listingId);
     }
 
-    public void removeFavorite(UUID userId, UUID listingId) {
-        Favorites favorites = favoritesRepository.findByUserIdAndListingId(userId, listingId)
+    public void removeFavorite(UUID listingId) {
+        var authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getToken().getClaimAsString("sub");
+
+        Favorites favorite = favoritesRepository.findByUserIdAndListingId(UUID.fromString(currentUserId), listingId)
                 .orElseThrow(() -> new RuntimeException("Favorite not found"));
-        favoritesRepository.delete(favorites);
+
+        favoritesRepository.delete(favorite);
     }
+
 }

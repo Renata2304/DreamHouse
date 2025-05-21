@@ -62,6 +62,22 @@ export const ListingDetailsPage = () => {
 
         const data: Listing = await response.json();
         setListing(data);
+
+        // Check if the listing is in favorites
+        if (token) {
+          const favoritesResponse = await fetch(`http://localhost:8000/listings/favorites/check?listingId=${id}`, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          
+          if (favoritesResponse.ok) {
+            const isInFavorites = await favoritesResponse.json();
+            setIsFavorite(isInFavorites);
+          }
+        }
       } catch (error) {
         console.error("Error fetching listing details:", error);
         setError("Failed to fetch listing details");
@@ -174,14 +190,18 @@ export const ListingDetailsPage = () => {
                       color="primary" 
                       onClick={async () => {
                         try {
-                          const response = await fetch(`http://localhost:8000/favorites/add?listingId=${listing.id}`, {
+                          const endpoint = isFavorite 
+                            ? `http://localhost:8000/listings/favorites/remove?listingId=${listing.id}`
+                            : `http://localhost:8000/listings/favorites/add?listingId=${listing.id}`;
+                            
+                          const response = await fetch(endpoint, {
                             method: 'POST',
                             headers: {
                               'Authorization': `Bearer ${token}`,
                               'Content-Type': 'application/json',
                             },
                           });
-                      
+                          
                           if (response.ok) {
                             setIsFavorite(!isFavorite);
                           } else {
@@ -190,9 +210,9 @@ export const ListingDetailsPage = () => {
                             console.error("Failed to update favorites:", errorData);
                           }
                         } catch (error) {
-                          console.error("Error adding to favorites:", error);
+                          console.error("Error updating favorites:", error);
                         }
-                      }}                      
+                      }}
                     >
                       {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                     </IconButton>
