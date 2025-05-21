@@ -32,12 +32,14 @@ export const ListingDetailsPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/listing/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch listing details');
-        }
-        const data = await response.json();
-        setListing(data);
+        const response = await fetch(`http://localhost:8000/listing/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          credentials: "include"
+        });
       } catch (error) {
         console.error('Error fetching listing details:', error);
         setError("Failed to fetch listing details");
