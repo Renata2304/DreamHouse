@@ -4,12 +4,11 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ListingDto {
-
     private UUID id;
     private String title;
     private String description;
-    private String location;
     private BigDecimal price;
+    private String location;
     private float surface;
     private int rooms;
 
@@ -17,55 +16,62 @@ public class ListingDto {
         return id;
     }
 
-    public void setId(UUID id) {
+    public ListingDto setId(UUID id) {
         this.id = id;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public ListingDto setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public ListingDto setDescription(String description) {
         this.description = description;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+        return this;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public ListingDto setPrice(BigDecimal price) {
         this.price = price;
+        return this;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public ListingDto setLocation(String location) {
+        this.location = location;
+        return this;
     }
 
     public float getSurface() {
         return surface;
     }
 
-    public void setSurface(float surface) {
+    public ListingDto setSurface(float surface) {
         this.surface = surface;
+        return this;
     }
 
     public int getRooms() {
         return rooms;
     }
 
-    public void setRooms(int rooms) {
+    public ListingDto setRooms(int rooms) {
         this.rooms = rooms;
+        return this;
     }
 }
