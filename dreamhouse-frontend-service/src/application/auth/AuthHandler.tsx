@@ -18,7 +18,7 @@ export const AuthHandler: FC<PropsWithChildren> = ({ children }) => {
             // If we have an authorization code, process it
             if (code && codeVerifier) {
                 try {
-                    const response = await fetch('http://dreamhouse-api-gateway:8000/keycloak/realms/dreamhouse/protocol/openid-connect/token', {
+                    const response = await fetch('http://dreamhouse-api-gateway:8000/realms/dreamhouse/protocol/openid-connect/token', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
