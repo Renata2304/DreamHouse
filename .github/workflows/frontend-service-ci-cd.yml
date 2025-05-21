@@ -1,4 +1,4 @@
-name: DreamHouse Frontend CI/CD
+name: DreamHouse Frontend Service CI/CD
 
 on:
   push:
