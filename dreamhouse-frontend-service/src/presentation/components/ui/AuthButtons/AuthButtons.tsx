@@ -95,9 +95,11 @@ export const AuthButtons = () => {
         
         dispatch(resetProfile());
         
-        keycloak.logout({ 
-            redirectUri: window.location.origin 
-        });
+        if (keycloak && keycloak.token) {
+            keycloak.logout({ redirectUri: window.location.origin });
+          } else {
+            window.location.href = '/'; // fallback
+          }          
     };
 
     if (loggedIn) {

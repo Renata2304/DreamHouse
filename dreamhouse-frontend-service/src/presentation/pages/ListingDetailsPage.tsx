@@ -8,11 +8,24 @@ import {
   Grid,
   CircularProgress,
   Divider,
+  IconButton,
 } from "@mui/material";
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
 import { useIntl } from "react-intl";
 import { Listing } from "../../api/listings/models/Listing";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
+function getUserIdFromToken(token: string | null): string | null {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload?.sub || payload?.id || null;
+  } catch (e) {
+    return null;
+  }
+}
 
 export const ListingDetailsPage = () => {
   const { id } = useParams();
@@ -21,7 +34,9 @@ export const ListingDetailsPage = () => {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const token = localStorage.getItem("token");
+  const userId = getUserIdFromToken(token);
 
   useEffect(() => {
     const fetchListingDetails = async () => {
@@ -32,7 +47,7 @@ export const ListingDetailsPage = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:8000/listing/getListingDetails/${id}`, {
+        const response = await fetch(`http://localhost:8000/listings/listing/getListingDetails/${id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -145,8 +160,46 @@ export const ListingDetailsPage = () => {
                   <Button variant="outlined" onClick={() => navigate("/listings")}>
                     Back to Listings
                   </Button>
+
+                  {listing.owner?.id === userId ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => navigate(`/listings/edit/${listing.id}`)}
+                    >
+                      Edit Listing
+                    </Button>
+                  ) : (
+                    <IconButton 
+                      color="primary" 
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`http://localhost:8000/favorites/add?listingId=${listing.id}`, {
+                            method: 'POST',
+                            headers: {
+                              'Authorization': `Bearer ${token}`,
+                              'Content-Type': 'application/json',
+                            },
+                          });
+                      
+                          if (response.ok) {
+                            setIsFavorite(!isFavorite);
+                          } else {
+                            const contentType = response.headers.get("content-type");
+                            const errorData = contentType?.includes("application/json") ? await response.json() : await response.text();
+                            console.error("Failed to update favorites:", errorData);
+                          }
+                        } catch (error) {
+                          console.error("Error adding to favorites:", error);
+                        }
+                      }}                      
+                    >
+                      {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    </IconButton>
+                  )}
                 </Box>
               </Grid>
+
             </Grid>
           </Paper>
         </Box>

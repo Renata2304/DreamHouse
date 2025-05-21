@@ -31,6 +31,8 @@ services:
             - Content-Type
             - Date
             - Authorization
+            - Origin
+            - X-Requested-With
           credentials: true
           max_age: 1800
 
@@ -64,6 +66,8 @@ services:
             - Content-Type
             - Date
             - Authorization
+            - Origin
+            - X-Requested-With
           credentials: true
           max_age: 1800
 
@@ -78,27 +82,6 @@ services:
         paths:
           - /feedbacks/v3/api-docs
         strip_path: false
-    plugins:
-      - name: cors
-        config:
-          origins:
-            - http://localhost:3001
-          methods:
-            - GET
-            - POST
-            - PUT
-            - DELETE
-            - OPTIONS
-          headers:
-            - Accept
-            - Accept-Version
-            - Content-Length
-            - Content-MD5
-            - Content-Type
-            - Date
-            - Authorization
-          credentials: true
-          max_age: 1800
 
   - name: dreamhouse-auth-service
     url: http://dreamhouse-auth-service:8080
@@ -115,19 +98,3 @@ services:
           - /health
           - /metrics
         strip_path: false
-    plugins:
-      - name: cors
-        config:
-          origins:
-            - http://localhost:3001
-          methods:
-            - GET
-            - POST
-            - OPTIONS
-          headers:
-            - Accept
-            - Accept-Version
-            - Content-Type
-            - Authorization
-          credentials: true
-          max_age: 1800
