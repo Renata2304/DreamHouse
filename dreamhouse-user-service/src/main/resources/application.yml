@@ -39,7 +39,7 @@ spring:
             scope: openid, profile, email
         provider:
           keycloak:
-            issuer-uri: http://localhost:1100/realms/dreamhouse
+            issuer-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}
 
 jwt:
   auth:
