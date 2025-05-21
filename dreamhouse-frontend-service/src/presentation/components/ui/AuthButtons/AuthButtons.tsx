@@ -95,18 +95,30 @@ export const AuthButtons = () => {
     }
 
     return (
-        <Stack direction="column" spacing={1}>
+        <Stack direction="row" spacing={2}>
             <Button 
                 color="inherit" 
                 onClick={redirectToKeycloakLogin}
-                sx={{ minWidth: '100px' }}
+                sx={{ 
+                    minWidth: '100px',
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }}
             >
                 {formatMessage({ id: "globals.login" })}
             </Button>
             <Button 
                 color="inherit" 
                 onClick={redirectToKeycloakRegister}
-                sx={{ minWidth: '100px' }}
+                sx={{ 
+                    minWidth: '100px',
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                    }
+                }}
             >
                 {formatMessage({ id: "globals.register" })}
             </Button>

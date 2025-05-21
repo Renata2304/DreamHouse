@@ -4,9 +4,10 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import HomeIcon from '@mui/icons-material/Home';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppRoute } from 'routes';
+import { AppRoute } from 'routes/index';
 import { useIntl } from 'react-intl';
-import { useAppSelector } from '@application/store';
+import { useAppSelector, useAppDispatch } from '@application/store';
+import { resetProfile } from '@application/state-slices';
 import { IconButton, TextField, InputAdornment, Avatar, Box } from '@mui/material';
 import { useOwnUserHasRole } from '@infrastructure/hooks/useOwnUser';
 import { UserRoleEnum } from '@infrastructure/apis/client';
@@ -22,6 +23,7 @@ export const Navbar = () => {
   const { formatMessage } = useIntl();
   const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const { token, loggedIn } = useAppSelector(x => x.profileReducer);
 
@@ -37,7 +39,7 @@ export const Navbar = () => {
       }
 
       const data = await response.json();
-      navigate("/listings", { state: { listings: data } });
+      navigate(AppRoute.Listings, { state: { listings: data } });
     } catch (err) {
       console.error("Search error:", err);
     }
@@ -106,17 +108,58 @@ export const Navbar = () => {
             <div className="col-span-2">
               <NavbarLanguageSelector />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-3 flex justify-end items-center space-x-4">
               {loggedIn ? (
-                <Link to={AppRoute.Profile}>
-                  <IconButton>
-                    <Avatar sx={{ bgcolor: '#8D0909' }}>
+                <>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<AddIcon />}
+                    onClick={() => navigate(AppRoute.AddListing)}
+                    sx={{
+                      backgroundColor: 'white',
+                      color: '#8D0909',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      },
+                      minWidth: '120px'
+                    }}
+                  >
+                    {formatMessage({ id: "search.addListing" })}
+                  </Button>
+                  <IconButton 
+                    onClick={() => navigate(AppRoute.Profile)}
+                    sx={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      }
+                    }}
+                  >
+                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#8D0909' }}>
                       <PersonIcon />
                     </Avatar>
                   </IconButton>
-                </Link>
+                  <Button 
+                    color="inherit" 
+                    onClick={() => {
+                      dispatch(resetProfile());
+                      navigate(AppRoute.Index);
+                    }}
+                    sx={{ 
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                      }
+                    }}
+                  >
+                    {formatMessage({ id: "globals.logout" })}
+                  </Button>
+                </>
               ) : (
-                <AuthButtons />
+                <Box className="flex items-center space-x-2">
+                  <AuthButtons />
+                </Box>
               )}
             </div>
           </div>

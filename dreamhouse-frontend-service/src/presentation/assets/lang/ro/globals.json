@@ -27,5 +27,6 @@
     "home.subtitle": "Casa ta perfectă este la doar un click distanță",
     "search.placeholder": "Caută după locație...",
     "search.listings.title": "Lista Proprietăților",
-    "search.listings.placeholder": "Caută după titlu, locație, preț..."
+    "search.listings.placeholder": "Caută după titlu, locație, preț...",
+    "search.addListing": "Adaugă Proprietate"
 }

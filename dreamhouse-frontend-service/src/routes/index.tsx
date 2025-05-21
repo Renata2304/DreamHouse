@@ -4,14 +4,27 @@ import { HomePage } from "@presentation/pages/HomePage";
 import { ListingsPage } from "@presentation/pages/ListingPage";
 import { UsersPage } from "@presentation/pages/UsersPage";
 import { UserFilesPage } from "@presentation/pages/UserFilesPage";
+import { ProfilePage } from "@presentation/pages/ProfilePage";
+import { AddListingPage } from "@presentation/pages/AddListingPage";
 import { Outlet } from "react-router-dom";
+import { useOwnUserHasRole } from "@infrastructure/hooks/useOwnUser";
+import { UserRoleEnum } from "@infrastructure/apis/client";
 
 export enum AppRoute {
     Index = "/",
+    Login = "/login",
+    Register = "/register",
     Users = "/users",
     UserFiles = "/user-files",
-    Listings = "/listings"
+    Listings = "/listings",
+    Profile = "/profile",
+    AddListing = "/add-listing"
 }
+
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+    const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
+    return isAdmin ? <>{children}</> : null;
+};
 
 export const router = createBrowserRouter([
     {
@@ -27,12 +40,20 @@ export const router = createBrowserRouter([
                 element: <ListingsPage />
             },
             {
+                path: AppRoute.Profile,
+                element: <ProfilePage />
+            },
+            {
+                path: AppRoute.AddListing,
+                element: <AddListingPage />
+            },
+            {
                 path: AppRoute.Users,
-                element: <UsersPage />
+                element: <AdminRoute><UsersPage /></AdminRoute>
             },
             {
                 path: AppRoute.UserFiles,
-                element: <UserFilesPage />
+                element: <AdminRoute><UserFilesPage /></AdminRoute>
             }
         ]
     }

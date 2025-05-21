@@ -2,53 +2,10 @@ import { UserRoleEnum } from "@infrastructure/apis/client";
 import { useOwnUserHasRole } from "@infrastructure/hooks/useOwnUser";
 import { AppIntlProvider } from "@presentation/components/ui/AppIntlProvider";
 import { ToastNotifier } from "@presentation/components/ui/ToastNotifier";
-import { HomePage } from "@presentation/pages/HomePage";
-import { UserFilesPage } from "@presentation/pages/UserFilesPage";
-import { UsersPage } from "@presentation/pages/UsersPage";
-import { Route, Routes, RouterProvider, Outlet } from "react-router-dom";
-import { AppRoute } from "routes";
-import { createBrowserRouter } from "react-router-dom";
-import { ListingsPage } from "@presentation/pages/ListingPage";
-import { ProfilePage } from "@presentation/pages/ProfilePage";
-import { AddListingPage } from "@presentation/pages/AddListingPage";
-import { AuthHandler } from "@application/auth/AuthHandler";
+import { router } from "routes/index";
+import { RouterProvider } from "react-router-dom";
 
 export function App() {
-  const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <AuthHandler><Outlet /></AuthHandler>,
-      children: [
-        {
-          path: "/",
-          element: <HomePage />
-        },
-        {
-          path: "/listings",
-          element: <ListingsPage />
-        },
-        {
-          path: "/profile",
-          element: <ProfilePage />
-        },
-        {
-          path: "/add-listing",
-          element: <AddListingPage />
-        },
-        {
-          path: AppRoute.Users,
-          element: isAdmin ? <UsersPage /> : null
-        },
-        {
-          path: AppRoute.UserFiles,
-          element: <UserFilesPage />
-        }
-      ]
-    }
-  ]);
-
   return (
     <AppIntlProvider>
       <ToastNotifier />

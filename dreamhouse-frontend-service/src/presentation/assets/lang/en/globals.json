@@ -27,5 +27,6 @@
     "home.subtitle": "Your perfect home is just a search away",
     "search.placeholder": "Search by location...",
     "search.listings.title": "Listings",
-    "search.listings.placeholder": "Search by title, location, price..."
+    "search.listings.placeholder": "Search by title, location, price...",
+    "search.addListing": "Add Listing"
 }
