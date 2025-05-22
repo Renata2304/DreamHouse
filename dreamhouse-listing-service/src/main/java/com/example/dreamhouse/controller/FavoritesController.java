@@ -53,7 +53,7 @@ public class FavoritesController {
     }
 
     @GetMapping("/favorites/user/{userId}")
-    public List<Favorites> getFavoritesByUserId(@PathVariable UUID userId) {
+    public List<FavoritesDto> getFavoritesByUserId(@PathVariable UUID userId) {
         return favoritesService.getFavoritesByUserId(userId);
     }
 
