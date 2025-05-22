@@ -127,39 +127,82 @@ export const ProfilePage = memo(() => {
   useEffect(() => {
     if (!token) return;
 
-    const fetchFavorites = async () => {
-      try {
-        const res = await fetch('http://localhost:8000/users/favorites', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setFavorites(data);
-        }
-      } catch {
-      }
-    };
-
     const fetchListings = async () => {
+      if (!token) return;
+    
       try {
-        const res = await fetch('http://localhost:8000/listings/mine', {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.sub;
+    
+        const res = await fetch(`http://localhost:8000/listing/getByUser/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+    
         if (res.ok) {
-          const data = await res.json();
-          setListings(data);
+          const listingsData = await res.json();
+    
+          const listingsWithImages = await Promise.all(
+            listingsData.map(async (listing: Listing) => {
+              const imgRes = await fetch(`http://localhost:8000/images/byListing/${listing.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              const images = await imgRes.json();
+              return {
+                ...listing,
+                imageUrl: images?.[0]?.imagePath
+                  ? `http://localhost:8000/files/listings/${images[0].imagePath}`
+                  : undefined,
+              };
+            })
+          );
+    
+          setListings(listingsWithImages);
         }
-      } catch {
+      } catch (error) {
+        console.error("Failed to fetch listings:", error);
+      }
+    };
+    
+    const fetchFavorites = async () => {
+      if (!token) return;
+    
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.sub;
+    
+        const res = await fetch(`http://localhost:8000/favorites/getByUser/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+    
+        if (res.ok) {
+          const favoritesData = await res.json();
+    
+          const favoritesWithImages = await Promise.all(
+            favoritesData.map(async (fav: { listing: Listing }) => {
+              const listing = fav.listing;
+              const imgRes = await fetch(`http://localhost:8000/images/byListing/${listing.id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              const images = await imgRes.json();
+              return {
+                ...listing,
+                imageUrl: images?.[0]?.imagePath
+                  ? `http://localhost:8000/files/listings/${images[0].imagePath}`
+                  : undefined,
+              };
+            })
+          );
+    
+          setFavorites(favoritesWithImages);
+        }
+      } catch (error) {
+        console.error("Failed to fetch favorites:", error);
       }
     };
 
-    fetchFavorites();
     fetchListings();
+    fetchFavorites();
   }, [token]);
-
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
 
   const handleImageUpload = async (file: File) => {
     if (!token) return;
@@ -198,6 +241,10 @@ export const ProfilePage = memo(() => {
     if (profile) {
       setProfile({ ...profile, imagePath: undefined, photoUrl: undefined });
     }
+  };
+
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
   };
 
   if (loading) {
