@@ -14,6 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/reviews")
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin(origins = "http://localhost:3001")
 public class ReviewController {
 
     private final ReviewService reviewService;

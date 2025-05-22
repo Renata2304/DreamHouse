@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/requests")
+@CrossOrigin(origins = "http://localhost:3001")
 public class PurchaseRequestController {
 
     private final PurchaseRequestService requestService;

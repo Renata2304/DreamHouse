@@ -134,7 +134,7 @@ export const ProfilePage = memo(() => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userId = payload.sub;
     
-        const res = await fetch(`http://localhost:8000/listing/getByUser/${userId}`, {
+        const res = await fetch(`http://localhost:8000/listings/listing/byUser/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
     
@@ -143,7 +143,7 @@ export const ProfilePage = memo(() => {
     
           const listingsWithImages = await Promise.all(
             listingsData.map(async (listing: Listing) => {
-              const imgRes = await fetch(`http://localhost:8000/images/byListing/${listing.id}`, {
+              const imgRes = await fetch(`http://localhost:8000/listings/images/byListing/${listing.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               });
               const images = await imgRes.json();
@@ -170,7 +170,7 @@ export const ProfilePage = memo(() => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userId = payload.sub;
     
-        const res = await fetch(`http://localhost:8000/favorites/getByUser/${userId}`, {
+        const res = await fetch(`http://localhost:8000/listings/favorites/favorites/user/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
     
@@ -180,7 +180,7 @@ export const ProfilePage = memo(() => {
           const favoritesWithImages = await Promise.all(
             favoritesData.map(async (fav: { listing: Listing }) => {
               const listing = fav.listing;
-              const imgRes = await fetch(`http://localhost:8000/images/byListing/${listing.id}`, {
+              const imgRes = await fetch(`http://localhost:8000/listings/images/byListing/${listing.id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
               });
               const images = await imgRes.json();
