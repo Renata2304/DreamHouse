@@ -10,7 +10,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
   Button,
   Tabs,
   Tab,
@@ -21,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HomeIcon from '@mui/icons-material/Home';
-import ImageUpload from '../components/ImageUpload';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';  // <-- Import user icon
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -50,8 +49,7 @@ interface Profile {
   username: string;
   name?: string;
   bio?: string;
-  photoUrl?: string;
-  imagePath?: string;
+  // removed photoUrl and imagePath since not used now
 }
 
 interface Listing {
@@ -59,7 +57,7 @@ interface Listing {
   title: string;
   location: string;
   price: number;
-  imageUrl: string;
+  // removed imageUrl
 }
 
 export const ProfilePage = memo(() => {
@@ -128,72 +126,36 @@ export const ProfilePage = memo(() => {
     if (!token) return;
 
     const fetchListings = async () => {
-      if (!token) return;
-    
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userId = payload.sub;
-    
+
         const res = await fetch(`http://localhost:8000/listings/listing/byUser/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-    
+
         if (res.ok) {
           const listingsData = await res.json();
-    
-          const listingsWithImages = await Promise.all(
-            listingsData.map(async (listing: Listing) => {
-              const imgRes = await fetch(`http://localhost:8000/listings/images/byListing/${listing.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              const images = await imgRes.json();
-              return {
-                ...listing,
-                imageUrl: images?.[0]?.imagePath
-                  ? `http://localhost:8000/files/listings/${images[0].imagePath}`
-                  : undefined,
-              };
-            })
-          );
-    
-          setListings(listingsWithImages);
+          setListings(listingsData); // Just set raw listings, no images
         }
       } catch (error) {
         console.error("Failed to fetch listings:", error);
       }
     };
-    
+
     const fetchFavorites = async () => {
-      if (!token) return;
-    
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const userId = payload.sub;
-    
+
         const res = await fetch(`http://localhost:8000/listings/favorites/favorites/user/${userId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-    
+
         if (res.ok) {
           const favoritesData = await res.json();
-    
-          const favoritesWithImages = await Promise.all(
-            favoritesData.map(async (fav: { listing: Listing }) => {
-              const listing = fav.listing;
-              const imgRes = await fetch(`http://localhost:8000/listings/images/byListing/${listing.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-              });
-              const images = await imgRes.json();
-              return {
-                ...listing,
-                imageUrl: images?.[0]?.imagePath
-                  ? `http://localhost:8000/files/listings/${images[0].imagePath}`
-                  : undefined,
-              };
-            })
-          );
-    
-          setFavorites(favoritesWithImages);
+          const simpleFavorites = favoritesData.map((fav: { listing: Listing }) => fav.listing);
+          setFavorites(simpleFavorites); // No images
         }
       } catch (error) {
         console.error("Failed to fetch favorites:", error);
@@ -203,45 +165,6 @@ export const ProfilePage = memo(() => {
     fetchListings();
     fetchFavorites();
   }, [token]);
-
-  const handleImageUpload = async (file: File) => {
-    if (!token) return;
-
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const res = await fetch('http://localhost:8000/users/profiles/image', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData,
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    // Refresh profile after upload
-    const updatedProfile = await res.json();
-    setProfile(updatedProfile);
-  };
-
-  const handleImageDelete = async () => {
-    if (!token) return;
-
-    const res = await fetch('http://localhost:8000/users/profiles/image', {
-      method: 'DELETE',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!res.ok) {
-      throw new Error('Failed to delete image');
-    }
-
-    // Refresh profile after delete
-    if (profile) {
-      setProfile({ ...profile, imagePath: undefined, photoUrl: undefined });
-    }
-  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -267,20 +190,12 @@ export const ProfilePage = memo(() => {
               Profile
             </Typography>
 
-            <ImageUpload
-              type="profile"
-              onUpload={handleImageUpload}
-              onDelete={handleImageDelete}
-              currentImageUrl={profile?.imagePath ? `http://localhost:8000/files/profiles/${profile.imagePath}` : undefined}
-              token={token || ''}
-            />
-
             <Grid container spacing={4}>
               <Grid item xs={12} md={4} className="flex flex-col items-center">
-                <Avatar
-                  src={profile?.photoUrl || (profile?.imagePath ? `http://localhost:8000/files/profiles/${profile.imagePath}` : undefined)}
-                  sx={{ width: 150, height: 150, mb: 2 }}
-                />
+                {/* Replace Avatar with icon */}
+                <Box sx={{ mb: 2 }}>
+                  <AccountCircleIcon sx={{ fontSize: 150, color: 'gray' }} />
+                </Box>
                 <Typography variant="h5" gutterBottom>
                   {profile?.name || profile?.username || 'User Name'}
                 </Typography>
@@ -310,12 +225,7 @@ export const ProfilePage = memo(() => {
                       {favorites.map((listing) => (
                         <Grid item xs={12} sm={6} md={4} key={listing.id}>
                           <Card>
-                            <CardMedia
-                              component="img"
-                              height="140"
-                              image={listing.imageUrl}
-                              alt={listing.title}
-                            />
+                            {/* Removed CardMedia (image) */}
                             <CardContent>
                               <Typography gutterBottom variant="h6">
                                 {listing.title}
@@ -344,12 +254,7 @@ export const ProfilePage = memo(() => {
                       {listings.map((listing) => (
                         <Grid item xs={12} sm={6} md={4} key={listing.id}>
                           <Card>
-                            <CardMedia
-                              component="img"
-                              height="140"
-                              image={listing.imageUrl}
-                              alt={listing.title}
-                            />
+                            {/* Removed CardMedia (image) */}
                             <CardContent>
                               <Typography gutterBottom variant="h6">
                                 {listing.title}

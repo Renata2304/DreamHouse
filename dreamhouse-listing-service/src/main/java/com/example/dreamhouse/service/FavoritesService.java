@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
+import java.util.stream.Collectors;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -68,12 +70,15 @@ public class FavoritesService {
     public List<Favorites> getFavoritesForCurrentUser() {
         JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         UUID userId = UUID.fromString(authentication.getToken().getClaimAsString("sub"));
-        return favoritesRepository.findAllByUserId(userId);
+        return favoritesRepository.findByUserId(userId);
     }
 
-    public List<Favorites> getFavoritesByUserId(UUID userId) {
-        return favoritesRepository.findAllByUserId(userId);
+    public List<FavoritesDto> getFavoritesByUserId(UUID userId) {
+        List<Favorites> favorites = favoritesRepository.findByUserId(userId);
+        return favorites.stream()
+                .map(fav -> new FavoritesDto()
+                        .setUserId(fav.getUser().getId())
+                        .setListingId(fav.getListing().getId()))
+                .collect(Collectors.toList());
     }
-
-
 }

@@ -2,6 +2,8 @@ package com.example.dreamhouse.repository;
 
 import com.example.dreamhouse.entity.Favorites;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +15,8 @@ public interface FavoritesRepository extends JpaRepository<Favorites, UUID> {
 
     Optional<Favorites> findByUserIdAndListingId(UUID userId, UUID listingId);
 
-    List<Favorites> findAllByUserId(UUID userId);
+    @Query("SELECT f FROM Favorites f WHERE f.user.id = :userId")
+    List<Favorites> findByUserId(@Param("userId") UUID userId);
+
 
 }
