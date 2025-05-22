@@ -40,119 +40,163 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`profile-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
+}
+
+interface Profile {
+  id: string;
+  username: string;
+  name?: string;
+  bio?: string;
+  photoUrl?: string;
+  imagePath?: string;
+}
+
+interface Listing {
+  id: string;
+  title: string;
+  location: string;
+  price: number;
+  imageUrl: string;
 }
 
 export const ProfilePage = memo(() => {
   const { formatMessage } = useIntl();
   const navigate = useNavigate();
-  const [profile, setProfile] = useState<any>(null);
-  const [favorites, setFavorites] = useState<any[]>([]);
-  const [listings, setListings] = useState<any[]>([]);
+
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [favorites, setFavorites] = useState<Listing[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [tabValue, setTabValue] = useState(0);
-  const token: string | null = localStorage.getItem('token');
+
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
+    const fetchProfile = async () => {
       try {
-        const response = await fetch('http://localhost:8000/users/profiles/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const res = await fetch('http://localhost:8000/users/profiles/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (response.status === 404) {
-          // extragem date din token pentru creare profil initial
+        if (res.status === 404) {
           const payload = JSON.parse(atob(token.split('.')[1]));
           const userId = payload.sub;
           const username = payload.preferred_username || payload.username || 'User';
 
-          const createResponse = await fetch(`http://localhost:8000/users/profiles/${userId}`, {
+          const createRes = await fetch(`http://localhost:8000/users/profiles/${userId}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              username: username,
-              // adaugă alte câmpuri inițiale dacă vrei
-            }),
+            body: JSON.stringify({ username }),
           });
-          
-          if (!createResponse.ok) {
-            const errorData = await createResponse.json();
-            if (errorData.errorMessage) {
-              throw new Error(errorData.errorMessage.message);
-            }
-            throw new Error('Failed to create profile');
-          }
-          const data = await createResponse.json();
-          setProfile(data);
 
-        } else if (!response.ok) {
-          const errorData = await response.json();
-          if (errorData.errorMessage) {
-            throw new Error(errorData.errorMessage.message);
+          if (!createRes.ok) {
+            const errData = await createRes.json();
+            throw new Error(errData.errorMessage?.message || 'Failed to create profile');
           }
-          throw new Error('Failed to fetch profile');
+
+          const createdProfile = await createRes.json();
+          setProfile(createdProfile);
+        } else if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.errorMessage?.message || 'Failed to fetch profile');
         } else {
-          const data = await response.json();
-          setProfile(data);
+          const profileData = await res.json();
+          setProfile(profileData);
         }
-      } catch (error) {
-        console.error('Error with profile:', error);
-        // Poți afisa notificare toast aici
+      } catch (error: any) {
+        console.error('Error fetching profile:', error.message || error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfileData();
+    fetchProfile();
   }, [token]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchFavorites = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/users/favorites', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setFavorites(data);
+        }
+      } catch {
+      }
+    };
+
+    const fetchListings = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/listings/mine', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setListings(data);
+        }
+      } catch {
+      }
+    };
+
+    fetchFavorites();
+    fetchListings();
+  }, [token]);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
   const handleImageUpload = async (file: File) => {
+    if (!token) return;
+
     const formData = new FormData();
     formData.append('image', file);
 
-    const response = await fetch('http://localhost:8000/users/profiles/image', {
+    const res = await fetch('http://localhost:8000/users/profiles/image', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
+      headers: { 'Authorization': `Bearer ${token}` },
       body: formData,
     });
 
-    if (!response.ok) {
+    if (!res.ok) {
       throw new Error('Failed to upload image');
     }
+
+    // Refresh profile after upload
+    const updatedProfile = await res.json();
+    setProfile(updatedProfile);
   };
 
   const handleImageDelete = async () => {
-    const response = await fetch('http://localhost:8000/users/profiles/image', {
+    if (!token) return;
+
+    const res = await fetch('http://localhost:8000/users/profiles/image', {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    if (!response.ok) {
+    if (!res.ok) {
       throw new Error('Failed to delete image');
+    }
+
+    // Refresh profile after delete
+    if (profile) {
+      setProfile({ ...profile, imagePath: undefined, photoUrl: undefined });
     }
   };
 
@@ -187,7 +231,7 @@ export const ProfilePage = memo(() => {
             <Grid container spacing={4}>
               <Grid item xs={12} md={4} className="flex flex-col items-center">
                 <Avatar
-                  src={profile?.photoUrl}
+                  src={profile?.photoUrl || (profile?.imagePath ? `http://localhost:8000/files/profiles/${profile.imagePath}` : undefined)}
                   sx={{ width: 150, height: 150, mb: 2 }}
                 />
                 <Typography variant="h5" gutterBottom>
@@ -204,7 +248,7 @@ export const ProfilePage = memo(() => {
                   Edit Profile
                 </Button>
               </Grid>
-              
+
               <Grid item xs={12} md={8}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                   <Tabs value={tabValue} onChange={handleTabChange}>
