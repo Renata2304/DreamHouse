@@ -74,12 +74,21 @@ export const ProfilePage = memo(() => {
         });
 
         if (response.status === 404) {
-          // If profile doesn't exist, create it by making a GET request to /{userId}
-          const userId = JSON.parse(atob(token.split('.')[1])).sub;
+          // extragem date din token pentru creare profil initial
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const userId = payload.sub;
+          const username = payload.preferred_username || payload.username || 'User';
+
           const createResponse = await fetch(`http://localhost:8000/users/profiles/${userId}`, {
+            method: 'POST',
             headers: {
-              'Authorization': `Bearer ${token}`
-            }
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: username,
+              // adaugă alte câmpuri inițiale dacă vrei
+            }),
           });
           
           if (!createResponse.ok) {
@@ -91,6 +100,7 @@ export const ProfilePage = memo(() => {
           }
           const data = await createResponse.json();
           setProfile(data);
+
         } else if (!response.ok) {
           const errorData = await response.json();
           if (errorData.errorMessage) {
@@ -103,7 +113,7 @@ export const ProfilePage = memo(() => {
         }
       } catch (error) {
         console.error('Error with profile:', error);
-        // You might want to show a toast notification here
+        // Poți afisa notificare toast aici
       } finally {
         setLoading(false);
       }
@@ -131,7 +141,6 @@ export const ProfilePage = memo(() => {
     if (!response.ok) {
       throw new Error('Failed to upload image');
     }
-
   };
 
   const handleImageDelete = async () => {
@@ -145,7 +154,6 @@ export const ProfilePage = memo(() => {
     if (!response.ok) {
       throw new Error('Failed to delete image');
     }
-
   };
 
   if (loading) {
@@ -183,7 +191,7 @@ export const ProfilePage = memo(() => {
                   sx={{ width: 150, height: 150, mb: 2 }}
                 />
                 <Typography variant="h5" gutterBottom>
-                  {profile?.name || 'User Name'}
+                  {profile?.name || profile?.username || 'User Name'}
                 </Typography>
                 <Typography variant="body1" color="text.secondary" className="text-center mb-4">
                   {profile?.bio || 'No bio available'}
@@ -279,4 +287,4 @@ export const ProfilePage = memo(() => {
       </WebsiteLayout>
     </Fragment>
   );
-}); 
+});
