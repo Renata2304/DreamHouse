@@ -11,5 +11,6 @@ export enum AppRoute {
     UserFiles = "/user-files",
     Listings = "/listings",
     Profile = "/profile",
-    AddListing = "/add-listing"
+    AddListing = "/add-listing",
+    AdminUsers = "/admin-users"
 }

@@ -8,14 +8,11 @@ import {
   Grid,
   CircularProgress,
   Divider,
-  IconButton,
 } from "@mui/material";
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
 import { useIntl } from "react-intl";
 import { Listing } from "../../api/listings/models/Listing";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 function getUserIdFromToken(token: string | null): string | null {
   if (!token) return null;
@@ -34,7 +31,6 @@ export const ListingDetailsPage = () => {
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isFavorite, setIsFavorite] = useState(false);
   const token = localStorage.getItem("token");
   const userId = getUserIdFromToken(token);
 
@@ -161,7 +157,7 @@ export const ListingDetailsPage = () => {
                     Back to Listings
                   </Button>
 
-                  {listing.owner?.id === userId ? (
+                  {listing.owner?.id === userId && (
                     <Button
                       variant="contained"
                       color="primary"
@@ -169,41 +165,9 @@ export const ListingDetailsPage = () => {
                     >
                       Edit Listing
                     </Button>
-                  ) : (
-                    <IconButton 
-                      color="primary" 
-                      onClick={async () => {
-                        try {
-                          const endpoint = isFavorite 
-                            ? `http://localhost:8000/listings/favorites/delete?listingId=${listing.id}`
-                            : `http://localhost:8000/listings/favorites/add?listingId=${listing.id}`;
-                            
-                          const response = await fetch(endpoint, {
-                            method: 'POST',
-                            headers: {
-                              'Authorization': `Bearer ${token}`,
-                              'Content-Type': 'application/json',
-                            },
-                          });
-                          
-                          if (response.ok) {
-                            setIsFavorite(!isFavorite);
-                          } else {
-                            const contentType = response.headers.get("content-type");
-                            const errorData = contentType?.includes("application/json") ? await response.json() : await response.text();
-                            console.error("Failed to update favorites:", errorData);
-                          }
-                        } catch (error) {
-                          console.error("Error updating favorites:", error);
-                        }
-                      }}
-                    >
-                      {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                    </IconButton>
                   )}
                 </Box>
               </Grid>
-
             </Grid>
           </Paper>
         </Box>

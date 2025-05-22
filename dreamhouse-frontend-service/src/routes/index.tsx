@@ -7,6 +7,7 @@ import { UserFilesPage } from "@presentation/pages/UserFilesPage";
 import { ProfilePage } from "@presentation/pages/ProfilePage";
 import { EditProfilePage } from "@presentation/pages/EditProfilePage";
 import { AddListingPage } from "@presentation/pages/AddListingPage";
+import { EditListingPage } from "@presentation/pages/EditListingPage";
 import { Outlet } from "react-router-dom";
 import { useOwnUserHasRole } from "@infrastructure/hooks/useOwnUser";
 import { UserRoleEnum } from "@infrastructure/apis/client";
@@ -21,7 +22,8 @@ export enum AppRoute {
     Listings = "/listings",
     Profile = "/profile",
     EditProfile = "/profile/edit",
-    AddListing = "/add-listing"
+    AddListing = "/add-listing",
+    EditListing = "/listings/edit/:id"
 }
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
@@ -57,6 +59,10 @@ export const router = createBrowserRouter([
             {
                 path: AppRoute.AddListing,
                 element: <AddListingPage />
+            },
+            {
+                path: AppRoute.EditListing,
+                element: <EditListingPage />
             },
             {
                 path: AppRoute.Users,

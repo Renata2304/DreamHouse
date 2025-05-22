@@ -55,7 +55,7 @@ export const EditProfilePage = memo(() => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
-
+  
     try {
       const response = await fetch('http://localhost:8000/users/profiles/me', {
         method: 'PUT',
@@ -68,41 +68,19 @@ export const EditProfilePage = memo(() => {
           bio
         })
       });
-
+  
       if (!response.ok) throw new Error('Failed to update profile');
+  
+      const updatedProfile = await response.json();
+  
+      setProfile(updatedProfile);
+  
+      setName(updatedProfile.name || '');
+      setBio(updatedProfile.bio || '');
+  
       navigate('/profile');
     } catch (error) {
       console.error('Error updating profile:', error);
-    }
-  };
-
-  const handleImageUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch('http://localhost:8000/users/profiles/image', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-  };
-
-  const handleImageDelete = async () => {
-    const response = await fetch('http://localhost:8000/users/profiles/image', {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete image');
     }
   };
 
@@ -125,14 +103,6 @@ export const EditProfilePage = memo(() => {
             <Typography variant="h4" gutterBottom>
               Edit Profile
             </Typography>
-
-            <ImageUpload
-              type="profile"
-              onUpload={handleImageUpload}
-              onDelete={handleImageDelete}
-              currentImageUrl={profile?.imagePath ? `http://localhost:8000/files/profiles/${profile.imagePath}` : undefined}
-              token={token || ''}
-            />
 
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
               <TextField

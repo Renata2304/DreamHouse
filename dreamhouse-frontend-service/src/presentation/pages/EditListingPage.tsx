@@ -1,7 +1,6 @@
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
-import { Fragment, memo, useState } from "react";
-import { useIntl } from "react-intl";
-import { Seo } from "@presentation/components/ui/Seo";
+import { Fragment, memo, useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -11,28 +10,14 @@ import {
   Grid,
   CircularProgress,
   Container,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormLabel,
+  ToggleButton,
+  ToggleButtonGroup
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Seo } from "@presentation/components/ui/Seo";
 
-interface Listing {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  location: string;
-  surface: number;
-  rooms: number;
-  imagePath?: string;
-  listingType?: string; // adaugat tipul listingului
-}
-
-export const AddListingPage = memo(() => {
-  const { formatMessage } = useIntl();
+export const EditListingPage = memo(() => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,10 +27,40 @@ export const AddListingPage = memo(() => {
     location: "",
     surface: "",
     rooms: "",
-    imageUrl: "",    // URL imagine
-    listingType: "sale", // default: vânzare
+    imageUrl: "",
+    status: "sale", // default: "sale" or "rent"
   });
+
   const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/listings/listing/getListingDetails/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch listing");
+        const data = await res.json();
+        setFormData({
+          title: data.title,
+          description: data.description,
+          price: String(data.price),
+          location: data.location,
+          surface: String(data.surface),
+          rooms: String(data.rooms),
+          imageUrl: data.imageUrl || "",
+          status: data.status || "sale",
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("Error loading listing data");
+      }
+    };
+
+    if (id && token) fetchListing();
+  }, [id, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,38 +70,45 @@ export const AddListingPage = memo(() => {
     }));
   };
 
+  const handleStatusChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newStatus: string | null
+  ) => {
+    if (newStatus !== null) {
+      setFormData((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const response = await fetch(
-        "http://localhost:8000/listings/listing/addListing",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...formData,
-            price: Number(formData.price),
-            surface: Number(formData.surface),
-            rooms: Number(formData.rooms),
-          }),
-        }
-      );
+      const response = await fetch(`http://localhost:8000/listings/listing/editListing/${id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          price: Number(formData.price),
+          surface: Number(formData.surface),
+          rooms: Number(formData.rooms),
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to add listing");
+        throw new Error("Failed to update listing");
       }
 
-      const data = await response.json();
-      toast.success("Listing added successfully!");
-      navigate("/listings");
+      toast.success("Listing updated successfully");
+      navigate("/profile");
     } catch (error) {
-      console.error("Error adding listing:", error);
-      toast.error("Failed to add listing. Please try again.");
+      console.error(error);
+      toast.error("Failed to update listing");
     } finally {
       setLoading(false);
     }
@@ -94,12 +116,12 @@ export const AddListingPage = memo(() => {
 
   return (
     <Fragment>
-      <Seo title="DreamHouse | Add Listing" />
+      <Seo title="Edit Listing" />
       <WebsiteLayout>
         <Container maxWidth="md" sx={{ mt: 4 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h4" gutterBottom>
-              Add New Listing
+              Edit Listing
             </Typography>
 
             <form onSubmit={handleSubmit}>
@@ -114,7 +136,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -127,7 +148,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
@@ -139,7 +159,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
@@ -150,7 +169,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
@@ -162,7 +180,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
@@ -174,8 +191,6 @@ export const AddListingPage = memo(() => {
                     onChange={handleChange}
                   />
                 </Grid>
-
-                {/* URL imagine */}
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
@@ -183,36 +198,26 @@ export const AddListingPage = memo(() => {
                     name="imageUrl"
                     value={formData.imageUrl}
                     onChange={handleChange}
-                    placeholder="https://example.com/image.jpg"
                   />
                 </Grid>
-
-                {/* Select listing type */}
                 <Grid item xs={12}>
-                  <FormLabel component="legend">Listing Type</FormLabel>
-                  <RadioGroup
-                    row
-                    name="listingType"
-                    value={formData.listingType}
-                    onChange={handleChange}
+                  <Typography variant="subtitle1" gutterBottom>
+                    Listing Type
+                  </Typography>
+                  <ToggleButtonGroup
+                    value={formData.status}
+                    exclusive
+                    onChange={handleStatusChange}
+                    fullWidth
                   >
-                    <FormControlLabel
-                      value="sale"
-                      control={<Radio />}
-                      label="De vânzare"
-                    />
-                    <FormControlLabel
-                      value="rent"
-                      control={<Radio />}
-                      label="De închiriat"
-                    />
-                  </RadioGroup>
+                    <ToggleButton value="sale">For Sale</ToggleButton>
+                    <ToggleButton value="rent">For Rent</ToggleButton>
+                  </ToggleButtonGroup>
                 </Grid>
-
                 <Grid item xs={12} className="flex justify-end space-x-4">
                   <Button
                     variant="outlined"
-                    onClick={() => navigate("/listings")}
+                    onClick={() => navigate("/profile")}
                     disabled={loading}
                   >
                     Cancel
@@ -223,7 +228,7 @@ export const AddListingPage = memo(() => {
                     disabled={loading}
                     startIcon={loading ? <CircularProgress size={20} /> : null}
                   >
-                    {loading ? "Adding..." : "Add Listing"}
+                    {loading ? "Saving..." : "Save Changes"}
                   </Button>
                 </Grid>
               </Grid>

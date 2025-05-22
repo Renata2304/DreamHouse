@@ -21,11 +21,11 @@ import AddIcon from '@mui/icons-material/Add';
  */
 export const Navbar = memo(() => {
   const { formatMessage } = useIntl();
-  const isAdmin = useOwnUserHasRole(UserRoleEnum.Admin);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const { token, loggedIn } = useAppSelector(x => x.profileReducer);
+  const isAdmin = token && JSON.parse(atob(token.split(".")[1]))?.email === "admin@admin.com";
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) return;
@@ -62,13 +62,6 @@ export const Navbar = memo(() => {
                 <Button color="inherit">
                   <Link style={{ color: '#8D0909' }} to={AppRoute.Users}>
                     {formatMessage({ id: "globals.users" })}
-                  </Link>
-                </Button>
-              </div>
-              <div className="col-span-1">
-                <Button color="inherit">
-                  <Link style={{ color: '#8D0909' }} to={AppRoute.UserFiles}>
-                    {formatMessage({ id: "globals.files" })}
                   </Link>
                 </Button>
               </div>
@@ -109,44 +102,67 @@ export const Navbar = memo(() => {
               <NavbarLanguageSelector />
             </div>
             <div className="col-span-3 flex justify-end items-center space-x-4">
-              {loggedIn ? (
-                <>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<AddIcon />}
-                    onClick={() => navigate(AppRoute.AddListing)}
-                    sx={{
-                      backgroundColor: 'white',
-                      color: '#8D0909',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                      },
-                      minWidth: '120px'
-                    }}
-                  >
-                    {formatMessage({ id: "search.addListing" })}
-                  </Button>
-                  <IconButton 
-                    onClick={() => navigate(AppRoute.Profile)}
-                    sx={{ 
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      }
-                    }}
-                  >
-                    <Avatar sx={{ width: 32, height: 32, bgcolor: '#8D0909' }}>
-                      <PersonIcon />
-                    </Avatar>
-                  </IconButton>
-                  <AuthButtons />
-                </>
-              ) : (
-                <Box className="flex items-center space-x-2">
-                  <AuthButtons />
-                </Box>
-              )}
+            {loggedIn ? (
+              <>
+                {isAdmin ? (
+                  <>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => navigate(AppRoute.Users)}
+                      sx={{
+                        backgroundColor: 'white',
+                        color: '#8D0909',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        },
+                        minWidth: '120px'
+                      }}
+                    >
+                      {formatMessage({ id: "globals.users" })}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<AddIcon />}
+                      onClick={() => navigate(AppRoute.AddListing)}
+                      sx={{
+                        backgroundColor: 'white',
+                        color: '#8D0909',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        },
+                        minWidth: '120px'
+                      }}
+                    >
+                      {formatMessage({ id: "search.addListing" })}
+                    </Button>
+
+                    <IconButton 
+                      onClick={() => navigate(AppRoute.Profile)}
+                      sx={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        }
+                      }}
+                    >
+                      <Avatar sx={{ width: 32, height: 32, bgcolor: '#8D0909' }}>
+                        <PersonIcon />
+                      </Avatar>
+                    </IconButton>
+                  </>
+                )}
+                <AuthButtons />
+              </>
+            ) : (
+              <Box className="flex items-center space-x-2">
+                <AuthButtons />
+              </Box>
+            )}
             </div>
           </div>
         </Toolbar>

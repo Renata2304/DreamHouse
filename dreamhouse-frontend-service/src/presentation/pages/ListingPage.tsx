@@ -1,9 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Button,
   Table,
@@ -13,10 +11,8 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField,
   TablePagination,
   IconButton,
-  InputAdornment,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -24,7 +20,6 @@ import {
 } from "@mui/material";
 import { WebsiteLayout } from "presentation/layouts/WebsiteLayout";
 import { Seo } from "@presentation/components/ui/Seo";
-import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useIntl } from "react-intl";
 import { ListingControllerApi } from "../../api/listings/apis/ListingControllerApi";
@@ -35,7 +30,6 @@ export const ListingsPage = () => {
   const navigate = useNavigate();
   const { formatMessage } = useIntl();
   const [listings, setListings] = useState<any[]>(location.state?.listings || []);
-  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -67,13 +61,11 @@ export const ListingsPage = () => {
       const api = new ListingControllerApi(config);
       await api.deleteListing({ id: selectedListingId });
       
-      // Remove the deleted listing from the state
       setListings(listings.filter(listing => listing.id !== selectedListingId));
       setDeleteDialogOpen(false);
       setSelectedListingId(null);
     } catch (error) {
       console.error('Error deleting listing:', error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -82,11 +74,7 @@ export const ListingsPage = () => {
     setSelectedListingId(null);
   };
 
-  const filteredListings = listings.filter((listing) =>
-    Object.values(listing).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const filteredListings = listings;
 
   const paginatedListings = filteredListings.slice(
     page * rowsPerPage,
@@ -102,23 +90,6 @@ export const ListingsPage = () => {
             {formatMessage({ id: "search.listings.title" })}
           </Typography>
 
-          <Box className="mb-4">
-            <TextField
-              fullWidth
-              variant="outlined"
-              placeholder={formatMessage({ id: "search.listings.placeholder" })}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-
           {listings.length === 0 ? (
             <Typography color="text.secondary">Nicio proprietate găsită.</Typography>
           ) : (
@@ -129,7 +100,7 @@ export const ListingsPage = () => {
                     <TableCell>Titlu</TableCell>
                     <TableCell>Locație</TableCell>
                     <TableCell>Preț (€)</TableCell>
-                    <TableCell>Tip Proprietate</TableCell>
+                    <TableCell>Numar Camere</TableCell>
                     <TableCell>Acțiuni</TableCell>
                   </TableRow>
                 </TableHead>
@@ -139,7 +110,7 @@ export const ListingsPage = () => {
                       <TableCell>{listing.title || "Titlu indisponibil"}</TableCell>
                       <TableCell>{listing.location || "Nespecificat"}</TableCell>
                       <TableCell>{listing.price ?? "Nespecificat"}</TableCell>
-                      <TableCell>{listing.propertyType || "Nespecificat"}</TableCell>
+                      <TableCell>{listing.rooms || "Nespecificat"}</TableCell>
                       <TableCell>
                         <Box className="flex gap-2">
                           <Button
