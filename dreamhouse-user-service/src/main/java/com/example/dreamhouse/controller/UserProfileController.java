@@ -18,6 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/profiles")
+@CrossOrigin(origins = "http://localhost:3001")
 public class UserProfileController {
 
     private final UserProfileService profileService;

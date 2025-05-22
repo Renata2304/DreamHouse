@@ -15,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/role")
 @SecurityRequirement(name = "bearerAuth")
+@CrossOrigin(origins = "http://localhost:3001")
 public class RoleController {
 
     private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
