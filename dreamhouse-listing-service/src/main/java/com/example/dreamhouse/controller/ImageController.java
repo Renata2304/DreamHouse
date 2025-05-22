@@ -14,7 +14,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/images")
 @SecurityRequirement(name = "bearerAuth")
-@CrossOrigin(origins = "http://localhost:3001")
 public class ImageController {
 
     private final ImageService imageService;
