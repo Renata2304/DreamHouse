@@ -5,6 +5,7 @@ import { ListingsPage } from "@presentation/pages/ListingPage";
 import { UsersPage } from "@presentation/pages/UsersPage";
 import { UserFilesPage } from "@presentation/pages/UserFilesPage";
 import { ProfilePage } from "@presentation/pages/ProfilePage";
+import { EditProfilePage } from "@presentation/pages/EditProfilePage";
 import { AddListingPage } from "@presentation/pages/AddListingPage";
 import { Outlet } from "react-router-dom";
 import { useOwnUserHasRole } from "@infrastructure/hooks/useOwnUser";
@@ -19,6 +20,7 @@ export enum AppRoute {
     UserFiles = "/user-files",
     Listings = "/listings",
     Profile = "/profile",
+    EditProfile = "/profile/edit",
     AddListing = "/add-listing"
 }
 
@@ -47,6 +49,10 @@ export const router = createBrowserRouter([
             {
                 path: AppRoute.Profile,
                 element: <ProfilePage />
+            },
+            {
+                path: AppRoute.EditProfile,
+                element: <EditProfilePage />
             },
             {
                 path: AppRoute.AddListing,

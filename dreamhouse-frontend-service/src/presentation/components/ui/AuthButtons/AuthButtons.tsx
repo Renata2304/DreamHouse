@@ -89,19 +89,17 @@ export const AuthButtons = () => {
     };
 
     const handleLogout = () => {
-       
         localStorage.clear();
         sessionStorage.clear();
-        
         dispatch(resetProfile());
-        
-        if (keycloak && keycloak.token) {
-            keycloak.logout({ redirectUri: window.location.origin });
-          } else {
-            window.location.href = '/'; // fallback
-          }          
+    
+        const keycloakLogoutUrl = `http://localhost:1100/realms/dreamhouse/protocol/openid-connect/logout` +
+            `?client_id=backend-rest-api` +
+            `&post_logout_redirect_uri=${encodeURIComponent('http://localhost:3001/')}`;
+    
+        window.location.href = keycloakLogoutUrl;
     };
-
+    
     if (loggedIn) {
         return (
             <Button color="inherit" onClick={handleLogout}>

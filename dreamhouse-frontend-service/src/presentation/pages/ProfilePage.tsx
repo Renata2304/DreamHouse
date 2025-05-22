@@ -57,21 +57,53 @@ export const ProfilePage = memo(() => {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tabValue, setTabValue] = useState(0);
-  const token = localStorage.getItem('token');
+  const token: string | null = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchProfileData = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch('http://localhost:8000/users/profiles/me', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
-        if (!response.ok) throw new Error('Failed to fetch profile');
-        const data = await response.json();
-        setProfile(data);
+
+        if (response.status === 404) {
+          // If profile doesn't exist, create it by making a GET request to /{userId}
+          const userId = JSON.parse(atob(token.split('.')[1])).sub;
+          const createResponse = await fetch(`http://localhost:8000/users/profiles/${userId}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (!createResponse.ok) {
+            const errorData = await createResponse.json();
+            if (errorData.errorMessage) {
+              throw new Error(errorData.errorMessage.message);
+            }
+            throw new Error('Failed to create profile');
+          }
+          const data = await createResponse.json();
+          setProfile(data);
+        } else if (!response.ok) {
+          const errorData = await response.json();
+          if (errorData.errorMessage) {
+            throw new Error(errorData.errorMessage.message);
+          }
+          throw new Error('Failed to fetch profile');
+        } else {
+          const data = await response.json();
+          setProfile(data);
+        }
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error with profile:', error);
+        // You might want to show a toast notification here
       } finally {
         setLoading(false);
       }
