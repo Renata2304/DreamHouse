@@ -66,5 +66,15 @@ public class ListingController {
         return ResponseEntity.ok(updatedListing);
     }
 
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
+    @GetMapping("/myListings")
+    public ResponseEntity<List<Listing>> getMyListings() {
+        return ResponseEntity.ok(listingService.getListingsForCurrentUser());
+    }
 
+    @GetMapping("/byUser/{userId}")
+    public ResponseEntity<List<Listing>> getListingsByUser(@PathVariable UUID userId) {
+        return ResponseEntity.ok(listingService.getListingsByUserId(userId));
+    }
 }

@@ -17,4 +17,6 @@ public interface ListingRepository extends JpaRepository<Listing, UUID> {
     @Query("SELECT l FROM Listing l WHERE l.location = :location")
     Optional<List<Listing>> findByLocation(@Param("location") String location);
 
+    List<Listing> findAllByOwnerId(UUID ownerId);
+
 }

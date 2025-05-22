@@ -118,5 +118,15 @@ public class ListingService {
         return listingRepository.save(listing);
     }
 
+    public List<Listing> getListingsForCurrentUser() {
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        String userId = authentication.getToken().getClaimAsString("sub");
+        UUID userUuid = UUID.fromString(userId);
+        return listingRepository.findAllByOwnerId(userUuid);
+    }
+
+    public List<Listing> getListingsByUserId(UUID userId) {
+        return listingRepository.findAllByOwnerId(userId);
+    }
 
 }
