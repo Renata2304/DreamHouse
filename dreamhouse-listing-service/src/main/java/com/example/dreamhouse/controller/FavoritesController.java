@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -43,5 +44,18 @@ public class FavoritesController {
         favoritesService.removeFavorite(listingId);
         return ResponseEntity.noContent().build();
     }
+
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('client_user')")
+    @GetMapping("/favorites")
+    public List<Favorites> getMyFavorites() {
+        return favoritesService.getFavoritesForCurrentUser();
+    }
+
+    @GetMapping("/favorites/user/{userId}")
+    public List<Favorites> getFavoritesByUserId(@PathVariable UUID userId) {
+        return favoritesService.getFavoritesByUserId(userId);
+    }
+
 
 }

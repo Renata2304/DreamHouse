@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,5 +64,16 @@ public class FavoritesService {
 
         favoritesRepository.delete(favorite);
     }
+
+    public List<Favorites> getFavoritesForCurrentUser() {
+        JwtAuthenticationToken authentication = (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UUID userId = UUID.fromString(authentication.getToken().getClaimAsString("sub"));
+        return favoritesRepository.findAllByUserId(userId);
+    }
+
+    public List<Favorites> getFavoritesByUserId(UUID userId) {
+        return favoritesRepository.findAllByUserId(userId);
+    }
+
 
 }
